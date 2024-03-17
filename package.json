@@ -17,7 +17,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./dist/index.js",
-        "dev": "nodemon ./src/server.ts",
+        "build": "tsc ./src/server.tsx",
+        "dev": "nodemon --exec tsx ./src/server.tsx",
         "babel": "./node_modules/@babel/cli/bin/babel.js",
         "lint": "./node_modules/.bin/eslint --ext .ts,.js",
         "check-lint": "./node_modules/.bin/eslint --ext .ts ./src/**/*.ts"
@@ -47,7 +48,7 @@
         "@typescript-eslint/parser": "^7.2.0",
         "eslint": "^8.57.0",
         "nodemon": "^3.1.0",
-        "ts-node": "^10.9.2",
+        "tsx": "^4.7.1",
         "typescript": "^5.4.2"
     }
 }

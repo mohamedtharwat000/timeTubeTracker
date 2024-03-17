@@ -12,11 +12,14 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true
     },
+    "ts-node": {
+        "esm": true
+    },
     "include": [
-        "./src/**/*"
+        "./**/*"
     ],
     "exclude": [
-        "./node_modules",
-        "./dist"
+        "../node_modules",
+        "../dist"
     ]
 }
