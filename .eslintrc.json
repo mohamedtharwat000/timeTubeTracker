@@ -1,6 +1,10 @@
 {
     "root": true,
     "parser": "@typescript-eslint/parser",
+    "env": {
+        "es6": true,
+        "node": true
+    },
     "plugins": [
         "@typescript-eslint"
     ],
@@ -14,6 +18,8 @@
     ],
     "rules": {
         "indent": [ "error", 4 ],
-        "semi": [ "error", "always" ]
+        "semi": [ "error", "always" ],
+        "no-underscore-dangle": "off",
+        "no-console": "off"
     }
 }
