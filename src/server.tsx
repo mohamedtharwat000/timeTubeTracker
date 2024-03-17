@@ -1,11 +1,8 @@
 import express from 'express';
-import cookie_parser from 'cookie-parser';
 
 const app = express();
-const port = process.env.port || 5000;
+const port = process.env.port || 3000;
 
 app.use(express.json());
-app.use(cookie_parser());
 
-
-app.listen(port);
+app.listen(port, () => console.log(`Server is running on port ${port}`));
