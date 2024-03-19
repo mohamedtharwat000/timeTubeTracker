@@ -87,7 +87,7 @@ class UserController {
         const remember_me: boolean = req.body.remember_me || false;
         const secert_key: jwt.Secret = process.env.secretKey!;
         const payload = { username: user.username, email: user.email };
-        const cookieMaxAge: {} = remember_me ? { maxAge: ms('30s') } : {};
+        const cookieMaxAge: {} = remember_me ? { maxAge: ms('60s') } : {};
 
         const token = jwt.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
 

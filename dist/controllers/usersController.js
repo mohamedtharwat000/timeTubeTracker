@@ -91,7 +91,7 @@ class UserController {
             const remember_me = req.body.remember_me || false;
             const secert_key = process.env.secretKey;
             const payload = { username: user.username, email: user.email };
-            const cookieMaxAge = remember_me ? { maxAge: (0, ms_1.default)('30s') } : {};
+            const cookieMaxAge = remember_me ? { maxAge: (0, ms_1.default)('60s') } : {};
             const token = jsonwebtoken_1.default.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
             res.cookie('session_id', token, Object.assign({ httpOnly: true, secure: true }, cookieMaxAge));
             return res.status(200).json({ token: token });
