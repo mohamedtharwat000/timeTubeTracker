@@ -37,7 +37,7 @@ class UserController {
             await user.save();
         } catch (err) {
             const error: ErrorWithCode = err as ErrorWithCode;
-            const errorsToSend: { error: Record<string, unknown>[] } = { error: [] };
+            const errorsToSend: { errors: Record<string, unknown>[] } = { errors: [] };
 
             if (error.code == 11000) {
                 const duplicateKeyField: string = Object.keys(error.keyPattern)[0];
@@ -45,17 +45,12 @@ class UserController {
             }
 
             if (error.errors.email) {
-                errorsToSend['error'].push({ email:  error.errors.email.message });
+                errorsToSend.errors.push({ email:  error.errors.email.message });
             }
 
             if (error.errors.username) {
-                errorsToSend['error'].push({ username:  error.errors.username.message });
+                errorsToSend.errors.push({ username:  error.errors.username.message });
             }
-            // console.log(error.errors.username?.kind);
-            // console.log(error.errors.email?.kind);
-            // console.log(error.code);
-            // console.log(error.keyPattern);
-            // console.log(error.keyValue);
 
             return res.status(401).json(errorsToSend);
         }

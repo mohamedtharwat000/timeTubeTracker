@@ -46,22 +46,17 @@ class UserController {
             }
             catch (err) {
                 const error = err;
-                const errorsToSend = { error: [] };
+                const errorsToSend = { errors: [] };
                 if (error.code == 11000) {
                     const duplicateKeyField = Object.keys(error.keyPattern)[0];
                     return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
                 }
                 if (error.errors.email) {
-                    errorsToSend['error'].push({ email: error.errors.email.message });
+                    errorsToSend.errors.push({ email: error.errors.email.message });
                 }
                 if (error.errors.username) {
-                    errorsToSend['error'].push({ username: error.errors.username.message });
+                    errorsToSend.errors.push({ username: error.errors.username.message });
                 }
-                // console.log(error.errors.username?.kind);
-                // console.log(error.errors.email?.kind);
-                // console.log(error.code);
-                // console.log(error.keyPattern);
-                // console.log(error.keyValue);
                 return res.status(401).json(errorsToSend);
             }
             return res.status(200).json({ registerd: { email, username } });
