@@ -9,7 +9,7 @@ const userSchema = new mongoose_1.Schema({
     username: {
         type: String,
         unique: true,
-        minlength: 4,
+        minlength: [4, 'Username must be at least 4 characters long'],
         required: true
     },
     email: {
@@ -17,12 +17,11 @@ const userSchema = new mongoose_1.Schema({
         required: true,
         unique: true,
         lowercase: true,
-        validate: [isEmail_1.default, "Please enter a valid email address"]
+        validate: [isEmail_1.default, "Email address must be a valid email address"]
     },
     password: {
         type: String,
         required: true,
-        minlength: 5,
     },
     createdAt: {
         type: Date,

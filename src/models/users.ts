@@ -15,7 +15,7 @@ const userSchema = new Schema<IUser>({
     username: {
         type: String,
         unique: true,
-        minlength: 4,
+        minlength: [4, 'Username must be at least 4 characters long'],
         required: true
     },
     email: {
@@ -23,12 +23,11 @@ const userSchema = new Schema<IUser>({
         required: true,
         unique: true,
         lowercase: true,
-        validate: [isEmail, "Please enter a valid email address"]
+        validate: [isEmail, "Email address must be a valid email address"]
     },
     password: {
         type: String,
         required: true,
-        minlength: 5,
     },
     createdAt: {
         type: Date,

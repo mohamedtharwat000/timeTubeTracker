@@ -41,8 +41,30 @@ class UserController {
             const user = new users_1.default({
                 email, username, password: hashedPassowrd
             });
-            yield user.save();
-            return res.status(200).json({ email, username });
+            try {
+                yield user.save();
+            }
+            catch (err) {
+                const error = err;
+                const errorsToSend = { error: [] };
+                if (error.code == 11000) {
+                    const duplicateKeyField = Object.keys(error.keyPattern)[0];
+                    return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
+                }
+                if (error.errors.email) {
+                    errorsToSend['error'].push({ email: error.errors.email.message });
+                }
+                if (error.errors.username) {
+                    errorsToSend['error'].push({ username: error.errors.username.message });
+                }
+                // console.log(error.errors.username?.kind);
+                // console.log(error.errors.email?.kind);
+                // console.log(error.code);
+                // console.log(error.keyPattern);
+                // console.log(error.keyValue);
+                return res.status(401).json(errorsToSend);
+            }
+            return res.status(200).json({ registerd: { email, username } });
         });
     }
     /**
