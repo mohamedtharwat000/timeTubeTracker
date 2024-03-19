@@ -23,7 +23,7 @@ const userSchema = new Schema<IUser>({
         required: true,
         unique: true,
         lowercase: true,
-        validate: [isEmail, "Email address must be a valid email address"]
+        validate: [isEmail, 'Email address must be a valid email address']
     },
     password: {
         type: String,

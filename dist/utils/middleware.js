@@ -71,7 +71,7 @@ class Middleware {
             const token = req.cookies.session_id;
             const secert_key = process.env.secretKey;
             if (!token) {
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.status(401).json({ error: 'Unauthorized' });
             }
             try {
                 const payload = jsonwebtoken_1.default.verify(token, secert_key);
@@ -79,12 +79,12 @@ class Middleware {
                 const user = yield users_1.default.findOne({ email: email, username: username }).exec();
                 if (!user) {
                     res.cookie('session_id', '', { maxAge: 1 });
-                    return res.status(401).json({ error: "Unauthorized" });
+                    return res.status(401).json({ error: 'Unauthorized' });
                 }
             }
             catch (_a) {
                 res.cookie('session_id', '', { maxAge: 1 });
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.status(401).json({ error: 'Unauthorized' });
             }
             return next();
         });

@@ -27,9 +27,9 @@ class UserController {
     static async singUpPost(req: Request<{}, {}, { email: string, username: string, password: string }, {}>, res: Response) {
         const { email, username, password } = req.body;
 
-        if (!email) return res.status(400).send({ error: 'Missing email' });
-        if (!username) return res.status(400).send({ error: 'Missing username' });
-        if (!password) return res.status(400).send({ error: 'Missing password' });
+        if (!email) return res.status(400).send({ error: 'Email is required' });
+        if (!username) return res.status(400).send({ error: 'Username is required' });
+        if (!password) return res.status(400).send({ error: 'Password is required' });
 
         const hashedPassowrd: string = await bcrypt.hash(password, await bcrypt.genSalt());
         const user: IUser = new User({
@@ -44,7 +44,7 @@ class UserController {
 
             if (error.code == 11000) {
                 const duplicateKeyField: string = Object.keys(error.keyPattern)[0];
-                return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
+                return res.status(400).json({ error: `${duplicateKeyField}  already exists.` });
             }
 
             if (error.errors.email) errorsToSend.errors.push({ email: error.errors.email.message });
@@ -69,8 +69,8 @@ class UserController {
     static async loginPost(req: Request<{}, {}, { email: loginField, username: loginField, password: string, remember_me: boolean }, {}>, res: Response) {
         const { email, username, password } = req.body;
 
-        if (!email && !username) return res.status(400).send({ error: 'Missing email and username' });
-        if (!password) return res.status(400).send({ error: 'Missing password' });
+        if (!email && !username) return res.status(400).send({ error: 'Email or Username are required' });
+        if (!password) return res.status(400).send({ error: 'Pssword is required' });
 
         const dataToLogInWith = email ? { email: email } : { username: username };
 

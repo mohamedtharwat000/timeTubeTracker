@@ -34,11 +34,11 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, username, password } = req.body;
             if (!email)
-                return res.status(400).send({ error: 'Missing email' });
+                return res.status(400).send({ error: 'Email is required' });
             if (!username)
-                return res.status(400).send({ error: 'Missing username' });
+                return res.status(400).send({ error: 'Username is required' });
             if (!password)
-                return res.status(400).send({ error: 'Missing password' });
+                return res.status(400).send({ error: 'Password is required' });
             const hashedPassowrd = yield bcrypt_1.default.hash(password, yield bcrypt_1.default.genSalt());
             const user = new users_1.default({
                 email, username, password: hashedPassowrd
@@ -51,7 +51,7 @@ class UserController {
                 const errorsToSend = { errors: [] };
                 if (error.code == 11000) {
                     const duplicateKeyField = Object.keys(error.keyPattern)[0];
-                    return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
+                    return res.status(400).json({ error: `${duplicateKeyField}  already exists.` });
                 }
                 if (error.errors.email)
                     errorsToSend.errors.push({ email: error.errors.email.message });
@@ -76,9 +76,9 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, username, password } = req.body;
             if (!email && !username)
-                return res.status(400).send({ error: 'Missing email and username' });
+                return res.status(400).send({ error: 'Email or Username are required' });
             if (!password)
-                return res.status(400).send({ error: 'Missing password' });
+                return res.status(400).send({ error: 'Pssword is required' });
             const dataToLogInWith = email ? { email: email } : { username: username };
             const user = yield users_1.default.findOne(dataToLogInWith).exec();
             if (!user) {

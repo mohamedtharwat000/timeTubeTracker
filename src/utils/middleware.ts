@@ -61,7 +61,7 @@ class Middleware {
         const secert_key: jwt.Secret = process.env.secretKey!;
 
         if (!token) {
-            return res.status(401).json({ error: "Unauthorized" });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
 
         try {
@@ -72,12 +72,12 @@ class Middleware {
 
             if (!user) {
                 res.cookie('session_id', '', { maxAge: 1 });
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.status(401).json({ error: 'Unauthorized' });
             }
 
         } catch {
             res.cookie('session_id', '', { maxAge: 1 });
-            return res.status(401).json({ error: "Unauthorized" });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
         return next();
 
