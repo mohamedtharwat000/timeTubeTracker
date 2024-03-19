@@ -4,7 +4,7 @@ import User, { IUser } from '../models/users';
 
 type loginField = string | null;
 type UsernameEmailErrors = { username: { path: string, message: string }, email: {  path: string, message: string }  };
-type ErrorWithCode = Error & { code: number, keyPattern: {}, keyValue: {}, errors : UsernameEmailErrors };
+type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors : UsernameEmailErrors };
 
 /**
  * The User Controller for signup, login, etc...
@@ -36,7 +36,7 @@ class UserController {
         try {
             await user.save();
         } catch (err) {
-            const error: ErrorWithCode = err as ErrorWithCode;
+            const error: FullError = err as FullError;
             const errorsToSend: { errors: Record<string, unknown>[] } = { errors: [] };
 
             if (error.code == 11000) {
@@ -44,13 +44,8 @@ class UserController {
                 return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
             }
 
-            if (error.errors.email) {
-                errorsToSend.errors.push({ email:  error.errors.email.message });
-            }
-
-            if (error.errors.username) {
-                errorsToSend.errors.push({ username:  error.errors.username.message });
-            }
+            if (error.errors.email) errorsToSend.errors.push({ email:  error.errors.email.message });
+            if (error.errors.username) errorsToSend.errors.push({ username:  error.errors.username.message });
 
             return res.status(401).json(errorsToSend);
         }

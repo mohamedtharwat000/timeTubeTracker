@@ -51,12 +51,10 @@ class UserController {
                     const duplicateKeyField = Object.keys(error.keyPattern)[0];
                     return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
                 }
-                if (error.errors.email) {
+                if (error.errors.email)
                     errorsToSend.errors.push({ email: error.errors.email.message });
-                }
-                if (error.errors.username) {
+                if (error.errors.username)
                     errorsToSend.errors.push({ username: error.errors.username.message });
-                }
                 return res.status(401).json(errorsToSend);
             }
             return res.status(200).json({ registerd: { email, username } });
