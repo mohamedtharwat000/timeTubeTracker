@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('*', Middleware.checkUser);
 
 router.get('/', (_req, res) => {
-    res.send('Main route');
+    res.send('hello e das alo man sadas helloin!');
 });
 
 export default router;

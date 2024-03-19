@@ -1,49 +1,52 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "env": {
-        "es6": true,
-        "node": true
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "parserOptions": {
-        "project": "./tsconfig.json"
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
-    ],
-    "ignorePatterns": [
-        "node_modules/",
-        "dist/"
-    ],
-    "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "no-underscore-dangle": "off",
-        "no-console": "off",
-        "@typescript-eslint/no-misused-promises": [
-            "error",
-            {
-                "checksVoidReturn": false
-            }
-        ],
-        "@typescript-eslint/ban-types": [
-            "error",
-            {
-                "types": {
-                    "{}": false
-                }
-            }
-        ]
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest",
+    "ecmaFeatures": {
+      "jsx": true
     }
+  },
+  "rules": {
+    "no-console": [
+      "off",
+      "always"
+    ],
+    "indent": [
+      "error",
+      4
+    ],
+    "no-underscore-dangle": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "{}": false
+        }
+      }
+    ],
+    "@typescript-eslint/indent": ["error", 4]
+  }
 }

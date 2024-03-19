@@ -9,6 +9,6 @@ const middleware_1 = __importDefault(require("../utils/middleware"));
 const router = express_1.default.Router();
 router.get('*', middleware_1.default.checkUser);
 router.get('/', (_req, res) => {
-    res.send('Main route');
+    res.send('hello e das alo man sadas helloin!');
 });
 exports.default = router;
