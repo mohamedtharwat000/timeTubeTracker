@@ -2,22 +2,26 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User, { IUser } from '../models/users';
 
+type loginField = string | null;
+
 
 /**
  * The User Controller for signup, login, etc...
  */
 class UserController {
+    
     /**
      * POST /api/signup
      * Sign up a new user
      *
      * @static
      * @async
-     * @param {Request} req - express Request contains the mandatory fields: email, username, and password.
-     * @param {Response} res - express Response
+     * @param {Request<{}, {}, {email: string, username: string, password: string}, {}>} req -  express Request
+     * contains the mandatory fields: email, username, and password.
+     * @param {Response} res -  express Response
      */
-    static async singUpPost(req: Request, res: Response) {
-        const { email, username, password } = (req.body as { email: string; username: string; password: string });
+    static async singUpPost(req: Request<{}, {}, {email: string, username: string, password: string}, {}>, res: Response) {
+        const { email, username, password } = req.body;
 
         if (!email) return res.status(400).send({ error: 'Missing email' });
         if (!username) return res.status(400).send({ error: 'Missing username' });
@@ -35,14 +39,16 @@ class UserController {
 
     /**
      * POST /api/login
+     * login a new user and add a JWT token as cookie session_id
      *
      * @static
      * @async
-     * @param {Request} req - express Request contains the mandatory: email || username, and password
+     * @param {Request<{}, {}, { email: loginField, username: loginField, password: string}, {}>} req - express Request
+     * contains the mandatory: email || username, and password
      * @param {Response} res - express Response
      */
-    static async loginPost(req: Request, res: Response) {
-        const { email, username, password } = (req.body as { email: string | null; username: string | null; password: string });
+    static async loginPost(req: Request<{}, {}, { email: loginField, username: loginField, password: string}, {}>, res: Response) {
+        const { email, username, password } = req.body;
 
         if (!email && !username) return res.status(400).send({ error: 'Missing email and username' });
         if (!password) return res.status(400).send({ error: 'Missing password' });

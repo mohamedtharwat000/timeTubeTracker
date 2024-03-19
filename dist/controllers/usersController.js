@@ -14,7 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_1 = __importDefault(require("../models/users"));
+/**
+ * The User Controller for signup, login, etc...
+ */
 class UserController {
+    /**
+     * POST /api/signup
+     * Sign up a new user
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, {email: string, username: string, password: string}, {}>} req -  express Request
+     * contains the mandatory fields: email, username, and password.
+     * @param {Response} res -  express Response
+     */
     static singUpPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, username, password } = req.body;
@@ -32,6 +45,16 @@ class UserController {
             return res.status(200).json({ email, username });
         });
     }
+    /**
+     * POST /api/login
+     * login a new user and add a JWT token as cookie session_id
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, { email: loginField, username: loginField, password: string}, {}>} req - express Request
+     * contains the mandatory: email || username, and password
+     * @param {Response} res - express Response
+     */
     static loginPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, username, password } = req.body;

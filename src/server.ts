@@ -1,18 +1,20 @@
-import express from 'express';
+import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
 import apiRouter from './routes/api';
 import router from './routes/index';
+import helmet from 'helmet';
 
-const app = express();
-const port = process.env.port || 3001;
+const app: Express = express();
+const port = process.env.port || 3000;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
+app.use(express.static('static'));
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/', router);
 app.use('/api', apiRouter);
-app.use(express.static('static'));
-app.use(express.urlencoded({ extended: true }));
 
 
 app.listen(port, () => {

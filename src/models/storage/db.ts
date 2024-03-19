@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-const dbHost = process.env.host || 'localhost';
-const dbPort = process.env.dbPort || '27017';
-const dbName = process.env.dbName || 'timetubetracker';
+const dbHost: string = process.env.host || 'localhost';
+const dbPort: string = process.env.dbPort || '27017';
+const dbName: string = process.env.dbName || 'timetubetracker';
 
-const dbURI = `mongodb://${dbHost}:${dbPort}/${dbName}`;
+const dbURI: string = `mongodb://${dbHost}:${dbPort}/${dbName}`;
 
 
 mongoose.connect(dbURI)

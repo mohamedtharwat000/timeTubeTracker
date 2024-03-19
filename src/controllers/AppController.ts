@@ -13,7 +13,6 @@ class AppController {
      * @static
      * @param {Request} _req - express Request
      * @param {Response} res - express  Response
-     *
      */
     static status(_req: Request, res: Response) {
         const dbConnection: number = db.readyState;

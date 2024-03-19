@@ -36,6 +36,14 @@
             {
                 "checksVoidReturn": false
             }
+        ],
+        "@typescript-eslint/ban-types": [
+            "error",
+            {
+                "types": {
+                    "{}": false
+                }
+            }
         ]
     }
 }

@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-
+import { IUser } from '../models/users';
 
 /**
  * The Middleware Controller, contains every Middleware used.
  */
 class Middleware {
+
     /**
      * A Middleware to check if there is a logged in user in the session.
      * If there is a user, add his username to the res.locals object to use
@@ -12,10 +13,10 @@ class Middleware {
      *
      * @static
      * @param {Request} req - express Request to get from it the session_id cookie
-     * @param {Response} res - express Response
+     * @param {Response<{}, {user: IUser | null}>} res - express Response will contains the user information if logged in
      * @param {NextFunction} next - the next function to be called.
      */
-    static checkUser(req: Request, res: Response, next: NextFunction) {
+    static checkUser(req: Request, res: Response<{}, {user: IUser | null}>, next: NextFunction) {
         const token = req.cookies.session_id as string;
 
         if (!token) {
@@ -23,7 +24,7 @@ class Middleware {
             return next();
         }
 
-        res.locals.user = "TODO";
+        res.locals.user = null; //TODO
         return next();
     }
 }

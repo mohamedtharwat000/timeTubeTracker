@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import express from 'express';
+import express, { Router } from 'express';
 import UserController from '../controllers/usersController';
 import AppController from '../controllers/AppController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 
 router.post('/signup', UserController.singUpPost);
