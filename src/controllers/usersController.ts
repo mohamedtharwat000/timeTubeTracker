@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User, { IUser } from '../models/users';
+import jwt from 'jsonwebtoken';
+import ms from 'ms';
 
 type loginField = string | null;
-type UsernameEmailErrors = { username: { path: string, message: string }, email: {  path: string, message: string }  };
-type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors : UsernameEmailErrors };
+type UsernameEmailErrors = { username: { path: string, message: string }, email: { path: string, message: string } };
+type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors: UsernameEmailErrors };
+
 
 /**
  * The User Controller for signup, login, etc...
@@ -44,8 +47,8 @@ class UserController {
                 return res.status(400).json({ error: `Duplication in ${duplicateKeyField}` });
             }
 
-            if (error.errors.email) errorsToSend.errors.push({ email:  error.errors.email.message });
-            if (error.errors.username) errorsToSend.errors.push({ username:  error.errors.username.message });
+            if (error.errors.email) errorsToSend.errors.push({ email: error.errors.email.message });
+            if (error.errors.username) errorsToSend.errors.push({ username: error.errors.username.message });
 
             return res.status(401).json(errorsToSend);
         }
@@ -63,7 +66,7 @@ class UserController {
      * contains the mandatory: email || username, and password
      * @param {Response} res - express Response
      */
-    static async loginPost(req: Request<{}, {}, { email: loginField, username: loginField, password: string }, {}>, res: Response) {
+    static async loginPost(req: Request<{}, {}, { email: loginField, username: loginField, password: string, remember_me: boolean }, {}>, res: Response) {
         const { email, username, password } = req.body;
 
         if (!email && !username) return res.status(400).send({ error: 'Missing email and username' });
@@ -81,7 +84,16 @@ class UserController {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        return res.status(200).json({ token: "token111" });
+        const remember_me: boolean = req.body.remember_me || false;
+        const secert_key: jwt.Secret = process.env.secretKey!;
+        const payload = { username: user.username, email: user.email };
+        const cookieMaxAge: {} = remember_me ? { maxAge: ms('30s') } : {};
+
+        const token = jwt.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
+
+        res.cookie('session_id', token, { httpOnly: true, secure: true, ...cookieMaxAge });
+
+        return res.status(200).json({ token: token });
     }
 }
 

@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_1 = __importDefault(require("../models/users"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const ms_1 = __importDefault(require("ms"));
 /**
  * The User Controller for signup, login, etc...
  */
@@ -86,7 +88,13 @@ class UserController {
             if (!isValid) {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
-            return res.status(200).json({ token: "token111" });
+            const remember_me = req.body.remember_me || false;
+            const secert_key = process.env.secretKey;
+            const payload = { username: user.username, email: user.email };
+            const cookieMaxAge = remember_me ? { maxAge: (0, ms_1.default)('30s') } : {};
+            const token = jsonwebtoken_1.default.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
+            res.cookie('session_id', token, Object.assign({ httpOnly: true, secure: true }, cookieMaxAge));
+            return res.status(200).json({ token: token });
         });
     }
 }
