@@ -7,8 +7,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const usersController_1 = __importDefault(require("../controllers/usersController"));
 const AppController_1 = __importDefault(require("../controllers/AppController"));
+const middleware_1 = __importDefault(require("../utils/middleware"));
 const router = express_1.default.Router();
 router.post('/signup', usersController_1.default.singUpPost);
 router.post('/login', usersController_1.default.loginPost);
 router.get('/status', AppController_1.default.status);
+router.post('/addlist', middleware_1.default.protectedRoute, (_req, res) => {
+    res.status(200).send("TODO!");
+});
 exports.default = router;
