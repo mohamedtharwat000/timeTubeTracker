@@ -3,7 +3,19 @@ import bcrypt from 'bcrypt';
 import User, { IUser } from '../models/users';
 
 
+/**
+ * The User Controller for signup, login, etc...
+ */
 class UserController {
+    /**
+     * POST /api/signup
+     * Sign up a new user
+     *
+     * @static
+     * @async
+     * @param {Request} req - express Request contains the mandatory fields: email, username, and password.
+     * @param {Response} res - express Response
+     */
     static async singUpPost(req: Request, res: Response) {
         const { email, username, password } = (req.body as { email: string; username: string; password: string });
 
@@ -21,6 +33,14 @@ class UserController {
         return res.status(200).json({ email, username });
     }
 
+    /**
+     * POST /api/login
+     *
+     * @static
+     * @async
+     * @param {Request} req - express Request contains the mandatory: email || username, and password
+     * @param {Response} res - express Response
+     */
     static async loginPost(req: Request, res: Response) {
         const { email, username, password } = (req.body as { email: string | null; username: string | null; password: string });
 
