@@ -16,11 +16,34 @@
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
-    "ignorePatterns": [ "node_modules/", "dist/" ],
+    "ignorePatterns": [
+        "node_modules/",
+        "dist/"
+    ],
     "rules": {
-        "indent": [ "error", 4 ],
-        "semi": [ "error", "always" ],
+        "indent": [
+            "error",
+            4
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
         "no-underscore-dangle": "off",
-        "no-console": "off"
+        "no-console": "off",
+        "@typescript-eslint/no-misused-promises": [
+            "error",
+            {
+                "checksVoidReturn": false
+            }
+        ],
+        "@typescript-eslint/ban-types": [
+            "error",
+            {
+                "types": {
+                    "{}": false
+                }
+            }
+        ]
     }
 }
