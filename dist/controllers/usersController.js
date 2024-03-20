@@ -88,14 +88,78 @@ class UserController {
             if (!isValid) {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
-            const remember_me = req.body.remember_me || false;
-            const secert_key = process.env.secretKey;
+            const rememberMe = req.body.remember_me || false;
+            const secerKkey = process.env.secretKey;
             const payload = { username: user.username, email: user.email };
-            const cookieMaxAge = remember_me ? { maxAge: (0, ms_1.default)('60s') } : {};
-            const token = jsonwebtoken_1.default.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
+            const cookieMaxAge = rememberMe ? { maxAge: (0, ms_1.default)('60s') } : {};
+            const token = jsonwebtoken_1.default.sign(payload, secerKkey, rememberMe ? undefined : { expiresIn: '3d' });
             res.cookie('session_id', token, Object.assign({ httpOnly: true, secure: true }, cookieMaxAge));
             return res.status(200).json({ token: token });
         });
+    }
+    static addToFavorite(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = res.locals.user;
+            const { playlistURL } = req.body;
+            if (!user) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            const userId = user._id;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            if (!user.favorites.includes(playlistURL)) {
+                yield users_1.default.findOneAndUpdate(userId, {
+                    $push: {
+                        favorites: playlistURL
+                    }
+                });
+                return res.status(200).json({
+                    success: {
+                        message: "Playlist was added successfully",
+                        playlist: playlistURL,
+                        userId: userId
+                    }
+                });
+            }
+            else {
+                return res.status(406).json({ error: "Playlist already exists in your favorite list" });
+            }
+        });
+    }
+    static removeFromFavorite(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = res.locals.user;
+            const { playlistURL } = req.body;
+            if (!user) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            const userId = user._id;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            if (user.favorites.includes(playlistURL)) {
+                yield users_1.default.findOneAndUpdate(userId, {
+                    $pull: {
+                        favorites: playlistURL
+                    }
+                });
+                return res.status(200).json({
+                    success: {
+                        message: "Playlist deleted successfully",
+                        playlist: playlistURL,
+                        userId: userId
+                    }
+                });
+            }
+            else {
+                return res.status(406).json({ error: "Playlist does not exists in your favorite list" });
+            }
+        });
+    }
+    static getFavorites(req, res) {
+        const user = res.locals.user;
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const favorites = user.favorites;
+        return res.status(200).json(favorites);
     }
 }
 exports.default = UserController;

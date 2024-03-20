@@ -81,6 +81,7 @@ class Middleware {
                     res.cookie('session_id', '', { maxAge: 1 });
                     return res.status(401).json({ error: 'Unauthorized' });
                 }
+                res.locals.user = user;
             }
             catch (_a) {
                 res.cookie('session_id', '', { maxAge: 1 });

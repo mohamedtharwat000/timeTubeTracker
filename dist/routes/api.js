@@ -12,7 +12,7 @@ const router = express_1.default.Router();
 router.post('/signup', usersController_1.default.singUpPost);
 router.post('/login', usersController_1.default.loginPost);
 router.get('/status', AppController_1.default.status);
-router.post('/addlist', middleware_1.default.protectedRoute, (_req, res) => {
-    res.status(200).send("TODO!");
-});
+router.post('/addlist', middleware_1.default.protectedRoute, usersController_1.default.addToFavorite);
+router.delete('/removelist', middleware_1.default.protectedRoute, usersController_1.default.removeFromFavorite);
+router.get('/getlist', middleware_1.default.protectedRoute, usersController_1.default.getFavorites);
 exports.default = router;

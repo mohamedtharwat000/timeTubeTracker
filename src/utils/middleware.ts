@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/users';
+import User, { IUser } from '../models/users';
 import jwt from 'jsonwebtoken';
 
 /**
@@ -56,7 +56,7 @@ class Middleware {
      * @param {Response} res - express Request
      * @param {NextFunction} next - the next function to be called
      */
-    static async protectedRoute(req: Request, res: Response, next: NextFunction) {
+    static async protectedRoute(req: Request, res: Response<{}, {user: IUser}>, next: NextFunction) {
         const token = req.cookies.session_id as string;
         const secert_key: jwt.Secret = process.env.secretKey!;
 
@@ -75,6 +75,7 @@ class Middleware {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
 
+            res.locals.user = user;
         } catch {
             res.cookie('session_id', '', { maxAge: 1 });
             return res.status(401).json({ error: 'Unauthorized' });

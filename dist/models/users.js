@@ -27,10 +27,10 @@ const userSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now
     },
-    favorites: {
-        type: [String],
-        default: []
-    }
+    favorites: [{ type: String, unique: true }]
 });
+// userSchema.post('save', function() {
+// this.favorites = [...new Set(this.favorites)];
+// });
 const User = (0, mongoose_1.model)('User', userSchema);
 exports.default = User;

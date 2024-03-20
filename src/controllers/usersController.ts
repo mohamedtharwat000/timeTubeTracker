@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import User, { IUser } from '../models/users';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
+import { ObjectId } from 'mongoose';
 
 type loginField = string | null;
 type UsernameEmailErrors = { username: { path: string, message: string }, email: { path: string, message: string } };
@@ -84,16 +85,88 @@ class UserController {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const remember_me: boolean = req.body.remember_me || false;
-        const secert_key: jwt.Secret = process.env.secretKey!;
+        const rememberMe: boolean = req.body.remember_me || false;
+        const secerKkey: jwt.Secret = process.env.secretKey!;
         const payload = { username: user.username, email: user.email };
-        const cookieMaxAge: {} = remember_me ? { maxAge: ms('60s') } : {};
+        const cookieMaxAge: {} = rememberMe ? { maxAge: ms('60s') } : {};
 
-        const token = jwt.sign(payload, secert_key, remember_me ? undefined : { expiresIn: '3d' });
+        const token = jwt.sign(payload, secerKkey, rememberMe ? undefined : { expiresIn: '3d' });
 
         res.cookie('session_id', token, { httpOnly: true, secure: true, ...cookieMaxAge });
 
         return res.status(200).json({ token: token });
+    }
+
+    static async addToFavorite(req: Request<{}, {}, { playlistURL: string }, {}>, res: Response<{}, { user: IUser }>) {
+        const user = res.locals.user;
+        const { playlistURL } = req.body;
+
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const userId: ObjectId = user._id as ObjectId;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        if (!user.favorites.includes(playlistURL)) {
+            await User.findOneAndUpdate(userId,
+                {
+                    $push: {
+                        favorites: playlistURL
+                    }
+                });
+            return res.status(200).json({
+                success: {
+                    message: "Playlist was added successfully",
+                    playlist: playlistURL,
+                    userId: userId
+                }
+            });
+        } else {
+            return res.status(406).json({ error: "Playlist already exists in your favorite list" });
+        }
+    }
+
+    static async removeFromFavorite(req: Request<{}, {}, { playlistURL: string }, {}>, res: Response<{}, { user: IUser }>) {
+        const user = res.locals.user;
+        const { playlistURL } = req.body;
+
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const userId: ObjectId = user._id as ObjectId;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        if (user.favorites.includes(playlistURL)) {
+            await User.findOneAndUpdate(userId,
+                {
+                    $pull: {
+                        favorites: playlistURL
+                    }
+                });
+            return res.status(200).json({
+                success: {
+                    message: "Playlist deleted successfully",
+                    playlist: playlistURL,
+                    userId: userId
+                }
+            });
+        } else {
+            return res.status(406).json({ error: "Playlist does not exists in your favorite list" });
+        }
+    }
+
+    static getFavorites(req: Request, res: Response<{}, { user: IUser }>) {
+        const user = res.locals.user;
+
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const favorites: [string] = user.favorites;
+
+        return res.status(200).json(favorites);
     }
 }
 

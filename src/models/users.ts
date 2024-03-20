@@ -1,7 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import isEmail from 'validator/lib/isEmail';
 
-
 export interface IUser extends Document {
     username: string;
     email: string;
@@ -33,11 +32,12 @@ const userSchema = new Schema<IUser>({
         type: Date,
         default: Date.now
     },
-    favorites: {
-        type: [String],
-        default: []
-    }
+    favorites: [{ type: String, unique: true }]
 });
+
+// userSchema.post('save', function() {
+// this.favorites = [...new Set(this.favorites)];
+// });
 
 const User = model<IUser>('User', userSchema);
 
