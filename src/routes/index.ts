@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import express from 'express';
-import Middleware from '../utils/middleware';
+import express, { Router, Request, Response } from 'express';
+// import Middleware from '../utils/middleware';
 
-const router = express.Router();
+const indexRouter: Router = express.Router();
 
-router.get('*', Middleware.checkUser);
+// indexRouter.all('*', Middleware.checkUser);
 
-router.get('/', (_req, res) => {
-    res.send('hello e das alo man sadas helloin!');
+indexRouter.get('/', (_req: Request, res: Response) => {
+  res.send('Welcom to TimeTubeTracker');
 });
 
-export default router;
+export default indexRouter;

@@ -1,23 +1,19 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import express, { Router } from 'express';
-import { Request, Response } from 'express';
-import UserController from '../controllers/usersController';
 import AppController from '../controllers/AppController';
-import Middleware from '../utils/middleware';
+import UserController from '../controllers/usersController';
+// import Middleware from '../utils/middleware';
 
-const router: Router = express.Router();
+// const authMiddleware = Middleware.protectedRoute;
+const apiRouter: Router = express.Router();
 
-router.post('/signup', UserController.singUpPost);
-router.post('/login', UserController.loginPost);
+apiRouter.get('/status', AppController.status);
 
-router.get('/status', AppController.status);
+apiRouter.post('/signup', UserController.signUp);
+apiRouter.post('/login', UserController.login);
+// apiRouter.delete('/logout', UserController.logout);
 
-router.post(
-    '/addlist',
-    Middleware.protectedRoute,
-    (_req: Request, res: Response) => {
-        res.status(200).send('TODO!');
-    }
-);
+// apiRouter.get('/getlist', authMiddleware, UserController.getFavorites);
+// apiRouter.post('/addlist', authMiddleware, UserController.addToFavorite);
+// apiRouter.delete('/rmlist', authMiddleware, UserController.removeFromFavorite);
 
-export default router;
+export default apiRouter;

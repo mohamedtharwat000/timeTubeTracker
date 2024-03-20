@@ -1,30 +1,25 @@
 {
-    "env": {
-        "node": true,
-        "browser": true,
-        "es6": true
-    },
-    "plugins": ["@typescript-eslint", "prettier"],
-    "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:prettier/recommended",
-        "airbnb-base",
-        "airbnb-typescript/base"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": "./tsconfig.json",
-        "ecmaVersion": "latest"
-    },
-    "rules": {
-        "indent": ["error", 4],
-        "@typescript-eslint/indent": ["error", 4],
-        "no-underscore-dangle": "off",
-        "no-console": ["off", "always"],
-        "@typescript-eslint/no-misused-promises": [
-            "error",
-            { "checksVoidReturn": false }
-        ],
-        "@typescript-eslint/ban-types": ["error", { "types": { "{}": false } }]
-    }
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true
+  },
+  "plugins": ["@typescript-eslint", "@stylistic", "prettier"],
+  "extends": [
+    // "plugin:@stylistic/recommended-extends",
+    // "plugin:@stylistic/disable-legacy",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/stylistic",
+    "plugin:prettier/recommended",
+    "airbnb-typescript/base",
+    "airbnb-base"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "import/extensions": "off"
+  }
 }
