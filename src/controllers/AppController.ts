@@ -1,6 +1,5 @@
-import db from '../models/storage/db';
 import { Request, Response } from 'express';
-
+import db from '../models/storage/db';
 
 /**
  * App Controller handles some routes
@@ -18,9 +17,11 @@ class AppController {
         const dbConnection: number = db.readyState;
 
         if (dbConnection !== 1) {
-            return res.status(500).json({ error: "connection to db has failed" });
+            return res
+                .status(500)
+                .json({ error: 'connection to db has failed' });
         }
-        return res.status(200).json({ dbConnection: dbConnection });
+        return res.status(200).json({ dbConnection });
     }
 }
 

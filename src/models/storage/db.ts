@@ -6,11 +6,11 @@ const dbName: string = process.env.dbName || 'timetubetracker';
 
 const dbURI: string = `mongodb://${dbHost}:${dbPort}/${dbName}`;
 
-
-mongoose.connect(dbURI)
+mongoose
+    .connect(dbURI)
     .then(() => {
         console.log('Connected To database.');
     })
-    .catch(err => console.log('error', err));
+    .catch((err) => console.log('error', err));
 
 export default mongoose.connection;

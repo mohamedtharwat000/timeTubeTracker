@@ -7,15 +7,17 @@ import Middleware from '../utils/middleware';
 
 const router: Router = express.Router();
 
-
 router.post('/signup', UserController.singUpPost);
 router.post('/login', UserController.loginPost);
 
 router.get('/status', AppController.status);
 
-router.post('/addlist', Middleware.protectedRoute, (_req: Request, res: Response) => {
-    res.status(200).send("TODO!");
-});
+router.post(
+    '/addlist',
+    Middleware.protectedRoute,
+    (_req: Request, res: Response) => {
+        res.status(200).send('TODO!');
+    }
+);
 
 export default router;
-

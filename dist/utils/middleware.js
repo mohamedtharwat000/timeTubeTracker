@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const users_1 = __importDefault(require("../models/users"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const users_1 = __importDefault(require("../models/users"));
 /**
  * The Middleware Controller, contains every Middleware used.
  */
@@ -30,9 +30,15 @@ class Middleware {
         try {
             const payload = jsonwebtoken_1.default.verify(token, secert_key);
             const { email, username } = payload;
-            const user = await users_1.default.findOne({ email: email, username: username }).exec();
+            const user = await users_1.default.findOne({
+                email,
+                username,
+            }).exec();
             if (user) {
-                const userToAdd = { username: user.username, email: user.email };
+                const userToAdd = {
+                    username: user.username,
+                    email: user.email,
+                };
                 res.locals.user = userToAdd;
             }
             else {
@@ -64,7 +70,10 @@ class Middleware {
         try {
             const payload = jsonwebtoken_1.default.verify(token, secert_key);
             const { email, username } = payload;
-            const user = await users_1.default.findOne({ email: email, username: username }).exec();
+            const user = await users_1.default.findOne({
+                email,
+                username,
+            }).exec();
             if (!user) {
                 res.cookie('session_id', '', { maxAge: 1 });
                 return res.status(401).json({ error: 'Unauthorized' });

@@ -13,6 +13,6 @@ router.post('/signup', usersController_1.default.singUpPost);
 router.post('/login', usersController_1.default.loginPost);
 router.get('/status', AppController_1.default.status);
 router.post('/addlist', middleware_1.default.protectedRoute, (_req, res) => {
-    res.status(200).send("TODO!");
+    res.status(200).send('TODO!');
 });
 exports.default = router;

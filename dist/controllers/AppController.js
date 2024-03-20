@@ -19,9 +19,11 @@ class AppController {
     static status(_req, res) {
         const dbConnection = db_1.default.readyState;
         if (dbConnection !== 1) {
-            return res.status(500).json({ error: "connection to db has failed" });
+            return res
+                .status(500)
+                .json({ error: 'connection to db has failed' });
         }
-        return res.status(200).json({ dbConnection: dbConnection });
+        return res.status(200).json({ dbConnection });
     }
 }
 exports.default = AppController;

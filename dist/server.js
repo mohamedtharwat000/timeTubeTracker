@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const helmet_1 = __importDefault(require("helmet"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const api_1 = __importDefault(require("./routes/api"));
 const index_1 = __importDefault(require("./routes/index"));
-const helmet_1 = __importDefault(require("helmet"));
 const app = (0, express_1.default)();
 const port = process.env.port || 3000;
 app.use(express_1.default.json());

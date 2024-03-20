@@ -8,9 +8,10 @@ const dbHost = process.env.host || 'localhost';
 const dbPort = process.env.dbPort || '27017';
 const dbName = process.env.dbName || 'timetubetracker';
 const dbURI = `mongodb://${dbHost}:${dbPort}/${dbName}`;
-mongoose_1.default.connect(dbURI)
+mongoose_1.default
+    .connect(dbURI)
     .then(() => {
     console.log('Connected To database.');
 })
-    .catch(err => console.log('error', err));
+    .catch((err) => console.log('error', err));
 exports.default = mongoose_1.default.connection;
