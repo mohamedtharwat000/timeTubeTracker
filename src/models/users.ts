@@ -35,10 +35,6 @@ const userSchema = new Schema<IUser>({
     favorites: [{ type: String, unique: true }]
 });
 
-// userSchema.post('save', function() {
-// this.favorites = [...new Set(this.favorites)];
-// });
-
 const User = model<IUser>('User', userSchema);
 
 export default User;

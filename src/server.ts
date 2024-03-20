@@ -3,9 +3,14 @@ import cookieParser from 'cookie-parser';
 import apiRouter from './routes/api';
 import router from './routes/index';
 import helmet from 'helmet';
+import dbConnect from './models/storage/db';
 
 const app: Express = express();
 const port = process.env.port || 3000;
+
+dbConnect().then(
+    () => {},
+    () => {});
 
 app.use(express.json());
 app.use(cookieParser());

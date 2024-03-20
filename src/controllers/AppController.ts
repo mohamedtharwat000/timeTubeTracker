@@ -1,4 +1,4 @@
-import db from '../models/storage/db';
+import { dbConnection as dbStatus } from '../models/storage/db';
 import { Request, Response } from 'express';
 
 
@@ -15,7 +15,7 @@ class AppController {
      * @param {Response} res - express  Response
      */
     static status(_req: Request, res: Response) {
-        const dbConnection: number = db.readyState;
+        const dbConnection: number = dbStatus.readyState;
 
         if (dbConnection !== 1) {
             return res.status(500).json({ error: "connection to db has failed" });

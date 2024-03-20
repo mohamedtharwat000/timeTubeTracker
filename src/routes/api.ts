@@ -6,15 +6,15 @@ import Middleware from '../utils/middleware';
 
 const router: Router = express.Router();
 
+router.get('/status', AppController.status);
 
 router.post('/signup', UserController.singUpPost);
 router.post('/login', UserController.loginPost);
+router.delete('/logout', UserController.logout);
 
-router.get('/status', AppController.status);
-
+router.get('/getlist', Middleware.protectedRoute, UserController.getFavorites);
 router.post('/addlist', Middleware.protectedRoute, UserController.addToFavorite);
 router.delete('/removelist', Middleware.protectedRoute, UserController.removeFromFavorite);
-router.get('/getlist', Middleware.protectedRoute, UserController.getFavorites);
 
 export default router;
 

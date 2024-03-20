@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const users_1 = __importDefault(require("../models/users"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const ms_1 = __importDefault(require("ms"));
+const users_1 = __importDefault(require("../models/users"));
 /**
  * The User Controller for signup, login, etc...
  */
@@ -68,7 +68,7 @@ class UserController {
      *
      * @static
      * @async
-     * @param {Request<{}, {}, { email: loginField, username: loginField, password: string}, {}>} req - express Request
+     * @param {Request<{}, {}, { email: LoginField, username: LoginField, password: string}, {}>} req - express Request
      * contains the mandatory: email || username, and password
      * @param {Response} res - express Response
      */
@@ -97,6 +97,31 @@ class UserController {
             return res.status(200).json({ token: token });
         });
     }
+    /**
+     * DELETE /api/logout
+     * Logout a user from the session
+     *
+     * @static
+     * @param {Request} req - express Request contains the session_id cookie
+     * @param {Response} res - express Response
+     */
+    static logout(req, res) {
+        const token = req.cookies.session_id;
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        res.cookie('session_id', '', { maxAge: 1 });
+        return res.status(200).json({ success: "logged out" });
+    }
+    /**
+     * POST /api/addlist
+     * Add a new playlist link to a user's favorite list
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, { playlistURL: string }, {}>} req - express Request contains the playlist url
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
     static addToFavorite(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = res.locals.user;
@@ -125,6 +150,15 @@ class UserController {
             }
         });
     }
+    /**
+     * DELETE /api/removelist
+     * Remove a playlist url from a user's favorite list
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, { playlistURL: string }, {}>} req - express Request contains the playlist url
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
     static removeFromFavorite(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = res.locals.user;
@@ -153,7 +187,15 @@ class UserController {
             }
         });
     }
-    static getFavorites(req, res) {
+    /**
+     * GET /api/getlist
+     * Retrieve user's favorite list
+     *
+     * @static
+     * @param {Request} _req - express Request
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
+    static getFavorites(_req, res) {
         const user = res.locals.user;
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });

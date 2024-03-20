@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import User, { IUser } from '../models/users';
-import jwt from 'jsonwebtoken';
-import ms from 'ms';
 import { ObjectId } from 'mongoose';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import ms from 'ms';
+import User, { IUser } from '../models/users';
 
-type loginField = string | null;
+type LoginField = string | null;
 type UsernameEmailErrors = { username: { path: string, message: string }, email: { path: string, message: string } };
 type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors: UsernameEmailErrors };
 
@@ -14,7 +14,6 @@ type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors: U
  * The User Controller for signup, login, etc...
  */
 class UserController {
-
     /**
      * POST /api/signup
      * Sign up a new user
@@ -63,11 +62,11 @@ class UserController {
      *
      * @static
      * @async
-     * @param {Request<{}, {}, { email: loginField, username: loginField, password: string}, {}>} req - express Request
+     * @param {Request<{}, {}, { email: LoginField, username: LoginField, password: string}, {}>} req - express Request
      * contains the mandatory: email || username, and password
      * @param {Response} res - express Response
      */
-    static async loginPost(req: Request<{}, {}, { email: loginField, username: loginField, password: string, remember_me: boolean }, {}>, res: Response) {
+    static async loginPost(req: Request<{}, {}, { email: LoginField, username: LoginField, password: string, remember_me: boolean }, {}>, res: Response) {
         const { email, username, password } = req.body;
 
         if (!email && !username) return res.status(400).send({ error: 'Email or Username are required' });
@@ -97,6 +96,34 @@ class UserController {
         return res.status(200).json({ token: token });
     }
 
+    /**
+     * DELETE /api/logout
+     * Logout a user from the session
+     *
+     * @static
+     * @param {Request} req - express Request contains the session_id cookie
+     * @param {Response} res - express Response
+     */
+    static logout(req: Request, res: Response) {
+        const token = req.cookies.session_id as string;
+        
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        res.cookie('session_id', '', { maxAge: 1 });
+        return res.status(200).json({ success: "logged out" });
+    }
+
+    /**
+     * POST /api/addlist
+     * Add a new playlist link to a user's favorite list
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, { playlistURL: string }, {}>} req - express Request contains the playlist url
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
     static async addToFavorite(req: Request<{}, {}, { playlistURL: string }, {}>, res: Response<{}, { user: IUser }>) {
         const user = res.locals.user;
         const { playlistURL } = req.body;
@@ -127,6 +154,15 @@ class UserController {
         }
     }
 
+    /**
+     * DELETE /api/removelist
+     * Remove a playlist url from a user's favorite list
+     *
+     * @static
+     * @async
+     * @param {Request<{}, {}, { playlistURL: string }, {}>} req - express Request contains the playlist url
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
     static async removeFromFavorite(req: Request<{}, {}, { playlistURL: string }, {}>, res: Response<{}, { user: IUser }>) {
         const user = res.locals.user;
         const { playlistURL } = req.body;
@@ -157,7 +193,15 @@ class UserController {
         }
     }
 
-    static getFavorites(req: Request, res: Response<{}, { user: IUser }>) {
+    /**
+     * GET /api/getlist
+     * Retrieve user's favorite list
+     *
+     * @static
+     * @param {Request} _req - express Request
+     * @param {Response<{}, { user: IUser }>} res - express Response contains the local object variable `user`
+     */
+    static getFavorites(_req: Request, res: Response<{}, { user: IUser }>) {
         const user = res.locals.user;
 
         if (!user) {
