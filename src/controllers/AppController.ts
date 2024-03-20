@@ -20,7 +20,6 @@ class AppController {
         if (dbConnection !== 1) {
             return res.status(500).json({ error: "connection to db has failed" });
         }
-        console.log(redisClient.isAlive());
         if (!redisClient.isAlive()) {
             return res.status(500).json({ error: "connection to redis has failed" });
         }
