@@ -12,9 +12,9 @@ router.post('/signup', UserController.singUpPost);
 router.post('/login', UserController.loginPost);
 router.delete('/logout', UserController.logout);
 
-router.get('/getlist', Middleware.protectedRoute, UserController.getFavorites);
-router.post('/addlist', Middleware.protectedRoute, UserController.addToFavorite);
-router.delete('/removelist', Middleware.protectedRoute, UserController.removeFromFavorite);
+router.get('/favorite', Middleware.protectedRoute, UserController.getFavorites);
+router.post('/favorite', Middleware.protectedRoute, UserController.addToFavorite);
+router.delete('/favorite', Middleware.protectedRoute, UserController.removeFromFavorite);
 
 export default router;
 

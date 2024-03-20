@@ -8,11 +8,7 @@ const dbURI: string = `mongodb://${dbHost}:${dbPort}/${dbName}`;
 
 
 async function dbConnect() {
-    await mongoose.connect(dbURI)
-        .then(() => {
-            console.log('Connected To database.');
-        })
-        .catch(err => console.log('error', err));
+    await mongoose.connect(dbURI);
 }
 
 export const dbConnection = mongoose.connection;

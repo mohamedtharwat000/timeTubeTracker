@@ -20,11 +20,7 @@ const dbName = process.env.dbName || 'timetubetracker';
 const dbURI = `mongodb://${dbHost}:${dbPort}/${dbName}`;
 function dbConnect() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield mongoose_1.default.connect(dbURI)
-            .then(() => {
-            console.log('Connected To database.');
-        })
-            .catch(err => console.log('error', err));
+        yield mongoose_1.default.connect(dbURI);
     });
 }
 exports.dbConnection = mongoose_1.default.connection;

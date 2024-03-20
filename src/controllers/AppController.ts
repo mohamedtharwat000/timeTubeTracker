@@ -1,6 +1,6 @@
-import { dbConnection as dbStatus } from '../models/storage/db';
 import { Request, Response } from 'express';
-
+import { dbConnection as dbStatus } from '../models/storage/db';
+import redisClient from '../models/storage/redis';
 
 /**
  * App Controller handles some routes
@@ -20,7 +20,10 @@ class AppController {
         if (dbConnection !== 1) {
             return res.status(500).json({ error: "connection to db has failed" });
         }
-        return res.status(200).json({ dbConnection: dbConnection });
+        if (!redisClient.isAlive()) {
+            return res.status(500).json({ error: "connection to redis has failed" });
+        }
+        return res.status(200).json({ db: !!dbConnection, redis: redisClient.isAlive()});
     }
 }
 

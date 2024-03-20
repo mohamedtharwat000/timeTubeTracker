@@ -16,6 +16,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const ms_1 = __importDefault(require("ms"));
 const users_1 = __importDefault(require("../models/users"));
+// const sessionMaxAge = '365d';
 /**
  * The User Controller for signup, login, etc...
  */
@@ -51,7 +52,7 @@ class UserController {
                 const errorsToSend = { errors: [] };
                 if (error.code == 11000) {
                     const duplicateKeyField = Object.keys(error.keyPattern)[0];
-                    return res.status(400).json({ error: `${duplicateKeyField}  already exists.` });
+                    return res.status(400).json({ error: `${duplicateKeyField} already exists.` });
                 }
                 if (error.errors.email)
                     errorsToSend.errors.push({ email: error.errors.email.message });
@@ -88,11 +89,12 @@ class UserController {
             if (!isValid) {
                 return res.status(401).json({ error: 'Unauthorized' });
             }
-            const rememberMe = req.body.remember_me || false;
             const secerKkey = process.env.secretKey;
-            const payload = { username: user.username, email: user.email };
-            const cookieMaxAge = rememberMe ? { maxAge: (0, ms_1.default)('60s') } : {};
-            const token = jsonwebtoken_1.default.sign(payload, secerKkey, rememberMe ? undefined : { expiresIn: '3d' });
+            const rememberMe = req.body.remember_me || false;
+            const payload = { username: user.username, email: user.email, rememberMe: rememberMe };
+            const tokenMaxAge = rememberMe ? { expiresIn: '3s' } : {}; // will be the same as cookieMaxAge
+            const cookieMaxAge = rememberMe ? { maxAge: (0, ms_1.default)('60s') } : {}; // 60 seconds, will be to a big number later
+            const token = jsonwebtoken_1.default.sign(payload, secerKkey, tokenMaxAge);
             res.cookie('session_id', token, Object.assign({ httpOnly: true, secure: true }, cookieMaxAge));
             return res.status(200).json({ token: token });
         });
@@ -100,6 +102,7 @@ class UserController {
     /**
      * DELETE /api/logout
      * Logout a user from the session
+     * And save the token to the blacklist cache list
      *
      * @static
      * @param {Request} req - express Request contains the session_id cookie
@@ -114,7 +117,7 @@ class UserController {
         return res.status(200).json({ success: "logged out" });
     }
     /**
-     * POST /api/addlist
+     * POST /api/favorite
      * Add a new playlist link to a user's favorite list
      *
      * @static
@@ -151,7 +154,7 @@ class UserController {
         });
     }
     /**
-     * DELETE /api/removelist
+     * DELETE /api/favorite
      * Remove a playlist url from a user's favorite list
      *
      * @static
@@ -188,7 +191,7 @@ class UserController {
         });
     }
     /**
-     * GET /api/getlist
+     * GET /api/favorite
      * Retrieve user's favorite list
      *
      * @static
