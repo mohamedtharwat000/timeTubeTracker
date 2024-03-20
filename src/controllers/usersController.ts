@@ -9,6 +9,7 @@ type LoginField = string | null;
 type UsernameEmailErrors = { username: { path: string, message: string }, email: { path: string, message: string } };
 type FullError = Error & { code: number, keyPattern: {}, keyValue: {}, errors: UsernameEmailErrors };
 
+// const sessionMaxAge = '365d';
 
 /**
  * The User Controller for signup, login, etc...
@@ -44,7 +45,7 @@ class UserController {
 
             if (error.code == 11000) {
                 const duplicateKeyField: string = Object.keys(error.keyPattern)[0];
-                return res.status(400).json({ error: `${duplicateKeyField}  already exists.` });
+                return res.status(400).json({ error: `${duplicateKeyField} already exists.` });
             }
 
             if (error.errors.email) errorsToSend.errors.push({ email: error.errors.email.message });
@@ -84,12 +85,13 @@ class UserController {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const rememberMe: boolean = req.body.remember_me || false;
         const secerKkey: jwt.Secret = process.env.secretKey!;
-        const payload = { username: user.username, email: user.email };
-        const cookieMaxAge: {} = rememberMe ? { maxAge: ms('60s') } : {};
+        const rememberMe: boolean = req.body.remember_me || false;
+        const payload = { username: user.username, email: user.email, rememberMe: rememberMe };
+        const tokenMaxAge: {} = rememberMe ? { expiresIn: '3s' } : {}; // will be the same as cookieMaxAge
+        const cookieMaxAge: {} = rememberMe ? { maxAge: ms('60s') } : {}; // 60 seconds, will be to a big number later
 
-        const token = jwt.sign(payload, secerKkey, rememberMe ? undefined : { expiresIn: '3d' });
+        const token = jwt.sign(payload, secerKkey, tokenMaxAge);
 
         res.cookie('session_id', token, { httpOnly: true, secure: true, ...cookieMaxAge });
 
@@ -99,6 +101,7 @@ class UserController {
     /**
      * DELETE /api/logout
      * Logout a user from the session
+     * And save the token to the blacklist cache list
      *
      * @static
      * @param {Request} req - express Request contains the session_id cookie
@@ -106,7 +109,7 @@ class UserController {
      */
     static logout(req: Request, res: Response) {
         const token = req.cookies.session_id as string;
-        
+
         if (!token) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
@@ -116,7 +119,7 @@ class UserController {
     }
 
     /**
-     * POST /api/addlist
+     * POST /api/favorite
      * Add a new playlist link to a user's favorite list
      *
      * @static
@@ -155,7 +158,7 @@ class UserController {
     }
 
     /**
-     * DELETE /api/removelist
+     * DELETE /api/favorite
      * Remove a playlist url from a user's favorite list
      *
      * @static
@@ -194,7 +197,7 @@ class UserController {
     }
 
     /**
-     * GET /api/getlist
+     * GET /api/favorite
      * Retrieve user's favorite list
      *
      * @static
