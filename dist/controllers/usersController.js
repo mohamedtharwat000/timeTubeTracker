@@ -114,7 +114,7 @@ class UserController {
         return res.status(200).json({ success: "logged out" });
     }
     /**
-     * POST /api/addlist
+     * POST /api/favorite
      * Add a new playlist link to a user's favorite list
      *
      * @static
@@ -151,7 +151,7 @@ class UserController {
         });
     }
     /**
-     * DELETE /api/removelist
+     * DELETE /api/favorite
      * Remove a playlist url from a user's favorite list
      *
      * @static
@@ -188,7 +188,7 @@ class UserController {
         });
     }
     /**
-     * GET /api/getlist
+     * GET /api/favorite
      * Retrieve user's favorite list
      *
      * @static
