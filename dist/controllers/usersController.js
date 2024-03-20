@@ -51,7 +51,7 @@ class UserController {
                 const errorsToSend = { errors: [] };
                 if (error.code == 11000) {
                     const duplicateKeyField = Object.keys(error.keyPattern)[0];
-                    return res.status(400).json({ error: `${duplicateKeyField}  already exists.` });
+                    return res.status(400).json({ error: `${duplicateKeyField} already exists.` });
                 }
                 if (error.errors.email)
                     errorsToSend.errors.push({ email: error.errors.email.message });
