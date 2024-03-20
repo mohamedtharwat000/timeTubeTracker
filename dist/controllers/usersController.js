@@ -4,8 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const ms_1 = __importDefault(require("ms"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const auth_1 = __importDefault(require("../utils/auth"));
 const user_1 = __importDefault(require("../models/users/user"));
 /**
  * Class representing user controller methods.
@@ -37,7 +36,7 @@ class UserController {
         })
             .then(() => res.status(200).json({ registered: { email, username } }))
             .catch((err) => {
-            res.status(401).json({ error: err.message.split(':')[0] });
+            res.status(401).json({ error: err.message });
         })
             .then(() => res);
     }
@@ -64,21 +63,8 @@ class UserController {
         if (!isValid) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        const secretKey = process.env.secretKey;
-        const rememberMe = !!req.body.rememberMe;
-        const payload = {
-            username,
-            email,
-            rememberMe,
-        };
-        const tokenMaxAge = rememberMe ? { expiresIn: '3s' } : {};
-        const cookieMaxAge = rememberMe ? { maxAge: (0, ms_1.default)('60s') } : {};
-        const token = jsonwebtoken_1.default.sign(payload, secretKey, tokenMaxAge);
-        res.cookie('sessionId', token, {
-            httpOnly: true,
-            secure: true,
-            ...cookieMaxAge,
-        });
+        const token = auth_1.default.generateToken(username, email, req.body.rememberMe);
+        auth_1.default.setSessionCookie(res, token, req.body.rememberMe);
         return res.status(200).json({ token });
     }
 }

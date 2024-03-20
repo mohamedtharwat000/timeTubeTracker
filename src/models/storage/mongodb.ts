@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import { log } from 'hlputils';
 
-const dbHost: string = process.env.host || 'localhost';
-const dbPort: string = process.env.dbPort || '27017';
-const dbName: string = process.env.dbName || 'timetubetracker';
+dotenv.config();
+
+const { dbHost } = process.env;
+const { dbPort } = process.env;
+const { dbName } = process.env;
 
 const dbURI = `mongodb://${dbHost}:${dbPort}/${dbName}`;
 

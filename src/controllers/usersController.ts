@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import ms from 'ms';
-import jwt from 'jsonwebtoken';
+import auth from '../utils/auth';
 import User from '../models/users/user';
 import UserInterface from '../models/users/userInterface';
 
@@ -37,7 +36,7 @@ class UserController {
       })
       .then(() => res.status(200).json({ registered: { email, username } }))
       .catch((err) => {
-        res.status(401).json({ error: err.message.split(':')[0] });
+        res.status(401).json({ error: err.message });
       })
       .then(() => res);
   }
@@ -71,23 +70,13 @@ class UserController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const secretKey: jwt.Secret = process.env.secretKey!;
-    const rememberMe = !!req.body.rememberMe;
-    const payload = {
+    const token: string = auth.generateToken(
       username,
       email,
-      rememberMe,
-    };
-    const tokenMaxAge = rememberMe ? { expiresIn: '3s' } : {};
-    const cookieMaxAge = rememberMe ? { maxAge: ms('60s') } : {};
+      req.body.rememberMe,
+    );
 
-    const token = jwt.sign(payload, secretKey, tokenMaxAge);
-
-    res.cookie('sessionId', token, {
-      httpOnly: true,
-      secure: true,
-      ...cookieMaxAge,
-    });
+    auth.setSessionCookie(res, token, req.body.rememberMe);
 
     return res.status(200).json({ token });
   }

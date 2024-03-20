@@ -1,13 +1,16 @@
 import express, { Express } from 'express';
+import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index';
 import apiRouter from './routes/api';
 
+dotenv.config();
+
 const app: Express = express();
 
-const port: string = process.env.port || '3000';
+const { port } = process.env;
 
 app.use(express.json());
 app.use(cookieParser());
