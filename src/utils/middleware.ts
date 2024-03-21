@@ -20,7 +20,7 @@ class Middleware {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<void> {
+  ): Promise<Response | void> {
     const token: string | undefined = req.cookies.sessionId;
     const { secretKey } = process.env;
 
@@ -47,11 +47,11 @@ class Middleware {
 
       if (!user) {
         res.cookie('sessionId', '', { maxAge: 1 });
-        res.status(401).json({ error: 'Unauthorized1' });
+        return res.status(401).json({ error: 'Unauthorized1' });
       }
       res.locals.user = user;
     } catch {
-      res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     return next();
