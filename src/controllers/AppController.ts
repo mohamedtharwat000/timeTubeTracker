@@ -21,7 +21,6 @@ class AppController {
     if (mongoState === 1 && redisState) {
       return res.status(200).json({ status: 'connected' });
     }
-
     return res.status(500).json({ error: 'no connection to database' });
   }
 }

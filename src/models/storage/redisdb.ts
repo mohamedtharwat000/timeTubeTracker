@@ -31,7 +31,7 @@ class RedisClient {
    * @returns {boolean} True if the client is connected, false otherwise.
    */
   public connected(): boolean {
-    return this.client.connected;
+    return this.client.isOpen;
   }
 
   /**
