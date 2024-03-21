@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const indexRouter = express_1.default.Router();
 indexRouter.get('/', (_req, res) => {
-    res.send('Welcom to TimeTubeTracker');
+    res.render('home', { title: 'Home' });
 });
 exports.default = indexRouter;
