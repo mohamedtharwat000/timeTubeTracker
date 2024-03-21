@@ -80,6 +80,26 @@ class UserController {
 
     return res.status(200).json({ token });
   }
+
+  /**
+   * DELETE /api/logout
+   * Logout a user from the session
+   * And save the token to the blacklist cache list
+   *
+   * @static
+   * @param {Request} req - express Request contains the session_id cookie
+   * @param {Response} res - express Response
+   */
+  static logout(req: Request, res: Response) {
+    const token: string = req.cookies.sessionId;
+
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    res.cookie('sessionId', '', { maxAge: 1 });
+    return res.status(200).json({ success: 'logged out' });
+  }
 }
 
 export default UserController;
