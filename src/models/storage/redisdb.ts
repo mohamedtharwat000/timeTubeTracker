@@ -12,11 +12,18 @@ class RedisClient {
    */
   constructor() {
     this.client = createClient();
+    this.connect();
+  }
 
+  /**
+   * Connects to the Redis database.
+   */
+  private async connect() {
     this.client
-      .on('error', (err) => log('Redis Client Error', err))
-      .on('connect', () => log('Connected to Redis'))
-      .on('ready', () => log('Redis client ready'));
+      .on('connect', () => log('Connected to Redis.'))
+      .on('ready', () => log('Redis connection ready.'))
+      .on('error', (err) => log(`Redis Client Error: ${err}`))
+      .connect();
   }
 
   /**
