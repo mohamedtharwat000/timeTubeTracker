@@ -1,50 +1,89 @@
-import * as redis from 'redis';
+import { createClient } from 'redis';
 import { log } from 'hlputils';
 
-type RedisClientType = ReturnType<typeof redis.createClient>;
-
-const redisPort = process.env.redisPort || '6379';
-const redisHost = process.env.redisHost || '127.0.0.1';
-
 /**
- * Redis Class that create a Redis Client
+ * Class representing a Redis client.
  */
 class RedisClient {
-  public client: RedisClientType;
+  private client;
 
   /**
-   * Initialized a Redis Client but without connecting to it
-   *
+   * Creates an instance of RedisClient.
    */
   constructor() {
-    this.client = redis.createClient({
-      socket: {
-        host: redisHost,
-        port: parseInt(redisPort, 10),
-      },
-    });
+    this.client = createClient();
 
-    this.client.on('error', (err) => {
-      log((err as redis.ErrorReply).message, 'error');
+    this.client
+      .on('error', (err) => log('Redis Client Error', err))
+      .on('connect', () => log('Connected to Redis'))
+      .on('ready', () => log('Redis client ready'));
+  }
+
+  /**
+   * Sets a key-value pair in Redis with an optional expiration time.
+   * @param key - The key to set.
+   * @param value - The value to set.
+   * @param expiresIn - Optional expiration time in seconds.
+   * @returns Promise<void>
+   */
+  public async set(
+    key: string,
+    value: string,
+    expiresIn?: number,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (expiresIn) {
+        this.client.set(key, value, 'EX', expiresIn, (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      } else {
+        this.client.set(key, value, (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      }
     });
   }
 
   /**
-   * Checks if Redis Client is ready
-   *
-   * @returns {boolean} true if ready, false otherwise.
+   * Gets the value associated with a key from Redis.
+   * @param key - The key to get the value for.
+   * @returns Promise<string | null>
    */
-  public isAlive(): boolean {
-    return this.client.isReady;
+  public async get(key: string): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      this.client.get(key, (err, value) => {
+        if (err) reject(err);
+        else resolve(value);
+      });
+    });
   }
 
   /**
-   * Connect to the redis client
-   *
-   * @async
+   * Deletes a key from Redis.
+   * @param key - The key to delete.
+   * @returns Promise<number>
    */
-  public async connect() {
-    await this.client.connect();
+  public async del(key: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.client.del(key, (err, numDeleted) => {
+        if (err) reject(err);
+        else resolve(numDeleted);
+      });
+    });
+  }
+
+  /**
+   * Closes the Redis connection.
+   */
+  public async close(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.quit((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   }
 }
 
