@@ -36,7 +36,7 @@ class Middleware {
             }).exec();
             if (!user) {
                 res.cookie('sessionId', '', { maxAge: 1 });
-                return res.status(401).json({ error: 'Unauthorized1' });
+                return res.status(401).json({ error: 'Unauthorized' });
             }
             res.locals.user = user;
         }

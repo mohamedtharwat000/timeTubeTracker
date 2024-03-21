@@ -36,7 +36,18 @@ class UserController {
       })
       .then(() => res.status(200).json({ registered: { email, username } }))
       .catch((err) => {
-        res.status(401).json({ error: err.message });
+        if (err.code === 11000) {
+          const duplicateKeyField: string = Object.keys(err.keyPattern)[0];
+          return res
+            .status(400)
+            .json({ error: `${duplicateKeyField} already exists.` });
+        }
+        return res.status(400).json({
+          error: Object.values(err.errors).map(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (e: any) => e.properties.message,
+          ),
+        });
       })
       .then(() => res);
   }
