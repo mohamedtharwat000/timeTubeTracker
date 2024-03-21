@@ -1,20 +1,27 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import express, { Router } from 'express';
-import UserController from '../controllers/usersController';
-import AppController from '../controllers/AppController';
 import Middleware from '../utils/middleware';
+import AppController from '../controllers/appController';
+import UserController from '../controllers/usersController';
+import FavoritesController from '../controllers/favoritesController';
+import PlaylistController from '../controllers/playlistController';
 
-const router: Router = express.Router();
+const authMiddleware = Middleware.auth;
+const apiRouter: Router = express.Router();
 
-router.get('/status', AppController.status);
+apiRouter.get('/status', AppController.status);
 
-router.post('/signup', UserController.singUpPost);
-router.post('/login', UserController.loginPost);
-router.delete('/logout', UserController.logout);
+apiRouter.post('/signup', UserController.signUp);
+apiRouter.post('/login', UserController.login);
+apiRouter.delete('/logout', UserController.logout);
 
-router.get('/favorite', Middleware.protectedRoute, UserController.getFavorites);
-router.post('/favorite', Middleware.protectedRoute, UserController.addToFavorite);
-router.delete('/favorite', Middleware.protectedRoute, UserController.removeFromFavorite);
+apiRouter.get('/favorite', authMiddleware, FavoritesController.getFavorites);
+apiRouter.post('/favorite', authMiddleware, FavoritesController.addToFavorite);
+apiRouter.delete(
+  '/favorite',
+  authMiddleware,
+  FavoritesController.removeFromFavorite,
+);
 
-export default router;
+apiRouter.post('/playlist', PlaylistController.calculatePlaylist);
 
+export default apiRouter;

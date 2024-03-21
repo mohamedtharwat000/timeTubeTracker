@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import express from 'express';
+import express, { Router, Request, Response } from 'express';
 import Middleware from '../utils/middleware';
 
-const router = express.Router();
+const indexRouter: Router = express.Router();
 
-router.get('*', Middleware.checkUser);
-
-router.get('/', (_req, res) => {
-    res.send('Main route');
+indexRouter.get('*', Middleware.auth);
+indexRouter.get('/', (_req: Request, res: Response) => {
+  res.render('home', { title: 'Home' });
 });
 
-export default router;
+export default indexRouter;
