@@ -20,7 +20,7 @@ app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)());
 app.set('view engine', 'ejs');
-app.use(express_1.default.static('static'));
+app.use(express_1.default.static(path_1.default.join(__dirname, '/static')));
 app.set('views', path_1.default.join(__dirname, '/views'));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/', index_1.default);
