@@ -4,10 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const middleware_1 = __importDefault(require("../utils/middleware"));
 const AppController_1 = __importDefault(require("../controllers/AppController"));
 const usersController_1 = __importDefault(require("../controllers/usersController"));
 const favoritesController_1 = __importDefault(require("../controllers/favoritesController"));
-const middleware_1 = __importDefault(require("../utils/middleware"));
+const playlistController_1 = __importDefault(require("../controllers/playlistController"));
 const authMiddleware = middleware_1.default.auth;
 const apiRouter = express_1.default.Router();
 apiRouter.get('/status', AppController_1.default.status);
@@ -17,4 +18,5 @@ apiRouter.delete('/logout', usersController_1.default.logout);
 apiRouter.get('/favorite', authMiddleware, favoritesController_1.default.getFavorites);
 apiRouter.post('/favorite', authMiddleware, favoritesController_1.default.addToFavorite);
 apiRouter.delete('/favorite', authMiddleware, favoritesController_1.default.removeFromFavorite);
+apiRouter.post('/playlist', playlistController_1.default.calculatePlaylist);
 exports.default = apiRouter;

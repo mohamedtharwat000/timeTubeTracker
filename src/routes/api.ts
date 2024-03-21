@@ -1,8 +1,9 @@
 import express, { Router } from 'express';
+import Middleware from '../utils/middleware';
 import AppController from '../controllers/AppController';
 import UserController from '../controllers/usersController';
 import FavoritesController from '../controllers/favoritesController';
-import Middleware from '../utils/middleware';
+import PlaylistController from '../controllers/playlistController';
 
 const authMiddleware = Middleware.auth;
 const apiRouter: Router = express.Router();
@@ -20,5 +21,7 @@ apiRouter.delete(
   authMiddleware,
   FavoritesController.removeFromFavorite,
 );
+
+apiRouter.post('/playlist', PlaylistController.calculatePlaylist);
 
 export default apiRouter;
