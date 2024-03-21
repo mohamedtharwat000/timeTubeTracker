@@ -20,6 +20,14 @@ class RedisClient {
   }
 
   /**
+   * Checks if the Redis client is connected.
+   * @returns {boolean} True if the client is connected, false otherwise.
+   */
+  public connected(): boolean {
+    return this.client.connected;
+  }
+
+  /**
    * Sets a key-value pair in Redis with an optional expiration time.
    * @param key - The key to set.
    * @param value - The value to set.
