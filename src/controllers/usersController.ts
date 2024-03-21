@@ -71,8 +71,8 @@ class UserController {
     }
 
     const token: string = auth.generateToken(
-      username,
-      email,
+      user.username,
+      user.email,
       req.body.rememberMe,
     );
 

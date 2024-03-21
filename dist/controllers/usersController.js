@@ -63,7 +63,7 @@ class UserController {
         if (!isValid) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        const token = auth_1.default.generateToken(username, email, req.body.rememberMe);
+        const token = auth_1.default.generateToken(user.username, user.email, req.body.rememberMe);
         auth_1.default.setSessionCookie(res, token, req.body.rememberMe);
         return res.status(200).json({ token });
     }
