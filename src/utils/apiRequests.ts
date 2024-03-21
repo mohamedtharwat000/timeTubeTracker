@@ -1,14 +1,24 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import paginateArray from './pagination';
 
 const youtube = google.youtube({ version: 'v3' });
 
 dotenv.config();
 
-async function fetchAPI(
+/**
+ * Fetch Youtube API to get all ids of a playlist's videos
+ *
+ * @async
+ * @param {string} playlistURL - playlist url
+ * @param {string | null} [nextPageToken] - the next page token, this is just a recursive local parameter
+ * @throws {Error} - error thrown if the url is broken
+ * @returns {Promise<string[]>} Array of string contains all videos' ids
+ */
+async function fetchPlaylistVideosIDs(
   playlistURL: string,
   nextPageToken?: string | null,
-): Promise<string[] | string> {
+): Promise<string[]> {
   const { apiKey } = process.env!;
 
   if (!playlistURL) {
@@ -32,9 +42,10 @@ async function fetchAPI(
       });
 
       if (data.nextPageToken) {
-        const newVides = (await fetchAPI(playlistURL, data.nextPageToken)) as [
-          string,
-        ];
+        const newVides = (await fetchPlaylistVideosIDs(
+          playlistURL,
+          data.nextPageToken,
+        )) as [string];
         videosIdsObj.push(...newVides);
       }
 
@@ -47,46 +58,35 @@ async function fetchAPI(
     );
 }
 
-// async function fetchAPI(
-//   playlistURL: string,
-//   nextPageToken?: string | null,
-// ): Promise<object | string> {
-//   const { apiKey } = process.env!;
+/**
+ * Get every video duration from a list of youtube videos ids
+ *
+ * @async
+ * @param {[]} ids - list of videos ids
+ * @throws {Error} - throws an error if ids is not array
+ * @returns {Promise<string[]>} return a list contains every video duration
+ */
+async function fetchVideosDuration(ids: []): Promise<string[]> {
+  const { apiKey } = process.env!;
+  const maxResults = 50;
+  let videos = [];
 
-//   if (!playlistURL) {
-//     return Promise.reject('Playlist URL is requierd');
-//   }
+  if (!Array.isArray(ids)) {
+    throw new Error("Broken array if videos ids");
+  }
 
-//   const apiEndPoint = 'https://www.googleapis.com/youtube/v3/playlistItems?';
-//   const apiUrlOptions = `playlistId=${playlistURL}&maxResults=50&part=contentDetails&key=${apiKey}`;
-//   const nextPageTokenOption = nextPageToken
-//     ? `&pageToken=${nextPageToken}`
-//     : '';
+  for (let i = 1; i <= Math.ceil(ids.length / maxResults); i++) {
+    videos.push(
+      ...(
+        await youtube.videos.list({
+          part: ['contentDetails'],
+          key: apiKey,
+          id: paginateArray(i, maxResults, ids) as [],
+        })
+      ).data.items,
+    );
+  }
+  return videos.map((e) => e.contentDetails.duration);
+}
 
-//   const fullApiEndpoint = apiEndPoint + apiUrlOptions + nextPageTokenOption;
-
-//   return new Promise((resolve, reject) => {
-//     fetch(fullApiEndpoint)
-//       .then(async (response) => {
-//         if (response.status !== 200) {
-//           reject(`Error ${response.status}: ${response.statusText}`);
-//         }
-
-//         const data = await response.json();
-//         let videosIdsObj = [];
-
-//         data.items.forEach((element) => {
-//           videosIdsObj.push(element.contentDetails.videoId);
-//         });
-
-//         if (data.nextPageToken) {
-//           videosIdsObj.push(await fetchAPI(playlistURL, data.nextPageToken));
-//         }
-
-//         resolve(videosIdsObj.flat());
-//       })
-//       .catch((err) => err);
-//   });
-// }
-
-export default fetchAPI;
+export { fetchPlaylistVideosIDs , fetchVideosDuration };

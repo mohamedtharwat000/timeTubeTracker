@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
-import fetchAPI from '../utils/apiRequests';
+import { fetchPlaylistVideosIDs, fetchVideosDuration } from '../utils/apiRequests';
 
 class PlaylistController {
   static async calculatePlaylist(
     _req: Request,
     res: Response,
   ): Promise<Response> {
-    const data = await fetchAPI('PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv')
-      .then((result: []) => ({ length: result.length, ids: result }))
+    const data = await fetchPlaylistVideosIDs('PLGO8ntvxgiZPZBHUGED6ItUujXylNGpMH')
+      .then((result) => result)
       .catch((error) => ({ error }));
 
+    console.log(await fetchVideosDuration(data as []));
     return res.status(200).json(data);
   }
 }
