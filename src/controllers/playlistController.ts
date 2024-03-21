@@ -3,11 +3,13 @@ import fetchAPI from '../utils/apiRequests';
 
 
 class PlaylistController {
-
-  static async calculatePlaylist(_req: Request, res: Response): Promise<Response> {
-    const data = await fetchAPI("Wnoaf6Zc3wk").then(
-      (result: []) => ({ length: result.length, ids: result }))
-      .catch((error) => error);
+  static async calculatePlaylist(
+    _req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const data = await fetchAPI('PL6UwySlcwEYIZGsbXnUxsojD0yeUA67lb')
+      .then((result: []) => ({ length: result.length, ids: result }))
+      .catch((error) => ({ error }));
 
     return res.status(200).json(data);
   }
