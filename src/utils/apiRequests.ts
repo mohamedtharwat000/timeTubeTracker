@@ -1,47 +1,92 @@
 import dotenv from 'dotenv';
+import { google } from 'googleapis';
+
+const youtube = google.youtube({ version: 'v3' });
 
 dotenv.config();
 
 async function fetchAPI(
   playlistURL: string,
   nextPageToken?: string | null,
-): Promise<object | string> {
+): Promise<string[] | string> {
   const { apiKey } = process.env!;
 
   if (!playlistURL) {
-    return Promise.reject('Playlist URL is requierd');
+    throw new Error('Playlist URL is requierd');
   }
 
-  const apiEndPoint = 'https://www.googleapis.com/youtube/v3/playlistItems?';
-  const apiUrlOptions = `playlistId=${playlistURL}&maxResults=50&part=contentDetails&key=${apiKey}`;
-  const nextPageTokenOption = nextPageToken
-    ? `&pageToken=${nextPageToken}`
-    : '';
+  return youtube.playlistItems
+    .list({
+      maxResults: 50,
+      part: ['contentDetails'],
+      playlistId: playlistURL,
+      key: apiKey,
+      pageToken: nextPageToken || '',
+    })
+    .then(async (response) => {
+      const { data } = response;
+      const videosIdsObj = [];
 
-  const fullApiEndpoint = apiEndPoint + apiUrlOptions + nextPageTokenOption;
+      data.items.forEach((element) => {
+        videosIdsObj.push(element.contentDetails.videoId);
+      });
 
-  return new Promise((resolve, reject) => {
-    fetch(fullApiEndpoint)
-      .then(async (response) => {
-        if (response.status !== 200) {
-          reject(`Error ${response.status}: ${response.statusText}`);
-        }
+      if (data.nextPageToken) {
+        const newVides = (await fetchAPI(playlistURL, data.nextPageToken)) as [
+          string,
+        ];
+        videosIdsObj.push(...newVides);
+      }
 
-        const data = await response.json();
-        let videosIdsObj = [];
-
-        data.items.forEach((element) => {
-          videosIdsObj.push(element.contentDetails.videoId);
-        });
-
-        if (data.nextPageToken) {
-          videosIdsObj.push(await fetchAPI(playlistURL, data.nextPageToken));
-        }
-
-        resolve(videosIdsObj.flat());
-      })
-      .catch((err) => err);
-  });
+      return videosIdsObj;
+    })
+    .catch((err) =>
+      Promise.reject(
+        `Error ${err.response.status}: ${err.response.statusText}`,
+      ),
+    );
 }
+
+// async function fetchAPI(
+//   playlistURL: string,
+//   nextPageToken?: string | null,
+// ): Promise<object | string> {
+//   const { apiKey } = process.env!;
+
+//   if (!playlistURL) {
+//     return Promise.reject('Playlist URL is requierd');
+//   }
+
+//   const apiEndPoint = 'https://www.googleapis.com/youtube/v3/playlistItems?';
+//   const apiUrlOptions = `playlistId=${playlistURL}&maxResults=50&part=contentDetails&key=${apiKey}`;
+//   const nextPageTokenOption = nextPageToken
+//     ? `&pageToken=${nextPageToken}`
+//     : '';
+
+//   const fullApiEndpoint = apiEndPoint + apiUrlOptions + nextPageTokenOption;
+
+//   return new Promise((resolve, reject) => {
+//     fetch(fullApiEndpoint)
+//       .then(async (response) => {
+//         if (response.status !== 200) {
+//           reject(`Error ${response.status}: ${response.statusText}`);
+//         }
+
+//         const data = await response.json();
+//         let videosIdsObj = [];
+
+//         data.items.forEach((element) => {
+//           videosIdsObj.push(element.contentDetails.videoId);
+//         });
+
+//         if (data.nextPageToken) {
+//           videosIdsObj.push(await fetchAPI(playlistURL, data.nextPageToken));
+//         }
+
+//         resolve(videosIdsObj.flat());
+//       })
+//       .catch((err) => err);
+//   });
+// }
 
 export default fetchAPI;
