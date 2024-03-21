@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import Middleware from '../utils/middleware';
-import AppController from '../controllers/AppController';
+import AppController from '../controllers/appController';
 import UserController from '../controllers/usersController';
 import FavoritesController from '../controllers/favoritesController';
 import PlaylistController from '../controllers/playlistController';

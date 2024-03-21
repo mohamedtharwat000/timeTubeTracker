@@ -1,19 +1,16 @@
 /**
- * Paginate an array and splits it
- *
- * @param {number} pageNumber - current page number, starting from 0
- * @param {number} [maxPerPage] - max element per page
- * @param {[]} data - the array to get from it the right number element for the current page
- * @returns {number[]} - the array after splitting it for the current page. 
+ * Paginates an array.
+ * @param {number} pageNumber - The page number.
+ * @param {number} maxPerPage - The maximum number of items per page.
+ * @param {any[]} data - The array to paginate.
+ * @returns {any[]} The paginated array.
  */
-function paginateArray(
+export default function paginateArray(
   pageNumber: number,
-  maxPerPage: number = 50,
-  data: [],
-): number[] {
+  maxPerPage = 50,
+  data: string[] = [],
+): string[] {
   const startIndex = (pageNumber - 1) * maxPerPage;
   const endIndex = Math.min(startIndex + maxPerPage, data.length);
   return data.slice(startIndex, endIndex);
 }
-
-export default paginateArray;

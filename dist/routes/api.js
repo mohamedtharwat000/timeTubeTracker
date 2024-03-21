@@ -5,13 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const middleware_1 = __importDefault(require("../utils/middleware"));
-const AppController_1 = __importDefault(require("../controllers/AppController"));
+const appController_1 = __importDefault(require("../controllers/appController"));
 const usersController_1 = __importDefault(require("../controllers/usersController"));
 const favoritesController_1 = __importDefault(require("../controllers/favoritesController"));
 const playlistController_1 = __importDefault(require("../controllers/playlistController"));
 const authMiddleware = middleware_1.default.auth;
 const apiRouter = express_1.default.Router();
-apiRouter.get('/status', AppController_1.default.status);
+apiRouter.get('/status', appController_1.default.status);
 apiRouter.post('/signup', usersController_1.default.signUp);
 apiRouter.post('/login', usersController_1.default.login);
 apiRouter.delete('/logout', usersController_1.default.logout);

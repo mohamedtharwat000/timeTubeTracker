@@ -1,92 +1,101 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import paginateArray from './pagination';
+import parseIso8601Duration from './parseDuration';
 
 const youtube = google.youtube({ version: 'v3' });
 
 dotenv.config();
 
 /**
- * Fetch Youtube API to get all ids of a playlist's videos
- *
- * @async
- * @param {string} playlistURL - playlist url
- * @param {string | null} [nextPageToken] - the next page token, this is just a recursive local parameter
- * @throws {Error} - error thrown if the url is broken
- * @returns {Promise<string[]>} Array of string contains all videos' ids
+ * Class for handling YouTube API interactions.
  */
-async function fetchPlaylistVideosIDs(
-  playlistURL: string,
-  nextPageToken?: string | null,
-): Promise<string[]> {
-  const { apiKey } = process.env!;
+export default class YouTubeHandler {
+  /**
+   * Fetches all video IDs from a YouTube playlist.
+   * @param {string} playlistURL - The URL of the playlist.
+   * @param {string} [nextPageToken] - The token for the next page.
+   * @throws {Error} If the playlist URL is invalid.
+   * @returns {Promise<string[]>} A promise that resolves to an array of video IDs.
+   */
+  static async fetchPlaylistVideosIDs(
+    playlistURL: string,
+    nextPageToken?: string,
+  ): Promise<string[]> {
+    const { apiKey } = process.env!;
 
-  if (!playlistURL) {
-    throw new Error('Playlist URL is requierd');
-  }
+    if (!playlistURL) {
+      throw new Error('Playlist URL is required');
+    }
 
-  return youtube.playlistItems
-    .list({
-      maxResults: 50,
-      part: ['contentDetails'],
-      playlistId: playlistURL,
-      key: apiKey,
-      pageToken: nextPageToken || '',
-    })
-    .then(async (response) => {
+    try {
+      const response = await youtube.playlistItems.list({
+        maxResults: 50,
+        part: ['contentDetails'],
+        playlistId: playlistURL,
+        key: apiKey,
+        pageToken: nextPageToken || '',
+      });
+
       const { data } = response;
-      const videosIdsObj = [];
+      const videosIdsObj: string[] = [];
 
       data.items.forEach((element) => {
         videosIdsObj.push(element.contentDetails.videoId);
       });
 
       if (data.nextPageToken) {
-        const newVides = (await fetchPlaylistVideosIDs(
+        const newVides = await this.fetchPlaylistVideosIDs(
           playlistURL,
           data.nextPageToken,
-        )) as [string];
+        );
         videosIdsObj.push(...newVides);
       }
 
       return videosIdsObj;
-    })
-    .catch((err) =>
-      Promise.reject(
+    } catch (err) {
+      throw new Error(
         `Error ${err.response.status}: ${err.response.statusText}`,
-      ),
-    );
-}
-
-/**
- * Get every video duration from a list of youtube videos ids
- *
- * @async
- * @param {[]} ids - list of videos ids
- * @throws {Error} - throws an error if ids is not array
- * @returns {Promise<string[]>} return a list contains every video duration
- */
-async function fetchVideosDuration(ids: []): Promise<string[]> {
-  const { apiKey } = process.env!;
-  const maxResults = 50;
-  let videos = [];
-
-  if (!Array.isArray(ids)) {
-    throw new Error("Broken array if videos ids");
+      );
+    }
   }
 
-  for (let i = 1; i <= Math.ceil(ids.length / maxResults); i++) {
-    videos.push(
-      ...(
-        await youtube.videos.list({
+  /**
+   * Fetches the duration of each video from a list of YouTube video IDs.
+   * @param {string[]} ids - The list of video IDs.
+   * @throws {Error} If the IDs are not in an array.
+   * @returns {Promise<string[]>} A promise that resolves to a list of video durations.
+   */
+  static async fetchVideosDuration(ids: string[]): Promise<string[]> {
+    const { apiKey } = process.env!;
+    const maxResults = 50;
+    const videos: string[] = [];
+
+    if (!Array.isArray(ids)) {
+      throw new Error('Broken array: video IDs');
+    }
+
+    const pages = Array.from(
+      { length: Math.ceil(ids.length / maxResults) },
+      (_, i) => i + 1,
+    );
+
+    await Promise.all(
+      pages.map(async (i) => {
+        const response = await youtube.videos.list({
           part: ['contentDetails'],
           key: apiKey,
           id: paginateArray(i, maxResults, ids) as [],
-        })
-      ).data.items,
+        });
+        videos.push(
+          ...response.data.items.map(
+            (item) => parseIso8601Duration(item.contentDetails.duration),
+            // eslint-disable-next-line function-paren-newline
+          ),
+        );
+      }),
     );
-  }
-  return videos.map((e) => e.contentDetails.duration);
-}
 
-export { fetchPlaylistVideosIDs , fetchVideosDuration };
+    return videos;
+  }
+}

@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
-import { fetchPlaylistVideosIDs, fetchVideosDuration } from '../utils/apiRequests';
+import YouTubeHandler from '../utils/apiRequests';
 
 class PlaylistController {
   static async calculatePlaylist(
     _req: Request,
     res: Response,
   ): Promise<Response> {
-    const data = await fetchPlaylistVideosIDs('PLGO8ntvxgiZPZBHUGED6ItUujXylNGpMH')
-      .then((result) => result)
-      .catch((error) => ({ error }));
+    const data = await YouTubeHandler.fetchPlaylistVideosIDs(
+      'PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS',
+    );
+    const dataDuration = await YouTubeHandler.fetchVideosDuration(data);
 
-    console.log(await fetchVideosDuration(data as []));
-    return res.status(200).json(data);
+    return res.status(200).json(dataDuration);
   }
 }
 

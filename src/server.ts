@@ -1,10 +1,10 @@
 import express, { Express } from 'express';
+import path from 'path';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import path from 'path';
 import indexRouter from './routes/index';
 import apiRouter from './routes/api';
 
