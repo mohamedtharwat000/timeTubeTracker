@@ -13,10 +13,10 @@ apiRouter.post('/signup', UserController.signUp);
 apiRouter.post('/login', UserController.login);
 apiRouter.delete('/logout', UserController.logout);
 
-apiRouter.get('/getlist', authMiddleware, FavoritesController.getFavorites);
-apiRouter.post('/addlist', authMiddleware, FavoritesController.addToFavorite);
+apiRouter.get('/favorite', authMiddleware, FavoritesController.getFavorites);
+apiRouter.post('/favorite', authMiddleware, FavoritesController.addToFavorite);
 apiRouter.delete(
-  '/rmlist',
+  '/favorite',
   authMiddleware,
   FavoritesController.removeFromFavorite,
 );
