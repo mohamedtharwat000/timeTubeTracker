@@ -11,12 +11,12 @@ class FavoritesController {
    * @param res - Express response object.
    * @returns Promise<void>
    */
-  static async addToFavorite(req: Request, res: Response): Promise<void> {
+  static async addToFavorite(req: Request, res: Response): Promise<Response> {
     const { user } = res.locals;
     const { playlistURL } = req.body;
 
     if (!user) {
-      res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     // eslint-disable-next-line no-underscore-dangle
@@ -28,15 +28,15 @@ class FavoritesController {
           favorites: playlistURL,
         },
       });
-      res.status(200).json({
+
+      return res.status(200).json({
         success: {
           message: 'Playlist was added successfully',
           playlist: playlistURL,
-          userId,
         },
       });
     }
-    res
+    return res
       .status(406)
       .json({ error: 'Playlist already exists in your favorite list' });
   }
@@ -47,12 +47,15 @@ class FavoritesController {
    * @param res - Express response object.
    * @returns Promise<void>
    */
-  static async removeFromFavorite(req: Request, res: Response): Promise<void> {
+  static async removeFromFavorite(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     const { user } = res.locals;
     const { playlistURL } = req.body;
 
     if (!user) {
-      res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     // eslint-disable-next-line no-underscore-dangle
@@ -65,7 +68,7 @@ class FavoritesController {
         },
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: {
           message: 'Playlist deleted successfully',
           playlist: playlistURL,
@@ -73,7 +76,7 @@ class FavoritesController {
         },
       });
     }
-    res
+    return res
       .status(406)
       .json({ error: 'Playlist does not exist in your favorite list' });
   }
@@ -84,16 +87,17 @@ class FavoritesController {
    * @param res - Express response object.
    * @returns void
    */
-  static getFavorites(_req: Request, res: Response): void {
+  static async getFavorites(_req: Request, res: Response): Promise<Response> {
     const { user } = res.locals;
 
     if (!user) {
-      res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { favorites } = user;
+    // eslint-disable-next-line no-underscore-dangle
+    const { favorites } = await User.findById(user._id).select('favorites');
 
-    res.status(200).json(favorites);
+    return res.status(200).json(favorites);
   }
 }
 

@@ -4,7 +4,7 @@ import UserController from '../controllers/usersController';
 import FavoritesController from '../controllers/favoritesController';
 import Middleware from '../utils/middleware';
 
-const authMiddleware = Middleware.protectedRoute;
+const authMiddleware = Middleware.auth;
 const apiRouter: Router = express.Router();
 
 apiRouter.get('/status', AppController.status);

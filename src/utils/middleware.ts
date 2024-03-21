@@ -7,17 +7,16 @@ import UserInterface from '../models/users/userInterface';
 dotenv.config();
 
 /**
- * Middleware class containing methods for user authentication and authorization.
+ * Middleware class containing methods for user authentication and protected routes.
  */
 class Middleware {
   /**
-   * Middleware to check if a user is logged in.
+   * Middleware function to ensuring user authentication.
    * @param req - Express request object.
    * @param res - Express response object.
    * @param next - Express next function.
-   * @returns Promise<void>
    */
-  static async checkUser(
+  static async auth(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -46,59 +45,16 @@ class Middleware {
         username,
       }).exec();
 
-      if (user) {
-        res.locals.user = { username, email };
-      } else {
-        res.locals.user = null;
-        res.cookie('sessionId', '', { maxAge: 1 });
-      }
-      return next();
-    } catch {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-  }
-
-  /**
-   * Middleware to protect routes requiring authentication.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @param next - Express next function.
-   * @returns Promise<void>
-   */
-  static async protectedRoute(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    const token: string | undefined = req.cookies.sessionId;
-    const { secretKey } = process.env;
-
-    if (!token || !secretKey) {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    try {
-      const payload = jwt.verify(token, secretKey);
-      const { email, username } = payload as {
-        email: string;
-        username: string;
-      };
-
-      const user: UserInterface | null = await User.findOne({
-        email,
-        username,
-      }).exec();
-
       if (!user) {
         res.cookie('sessionId', '', { maxAge: 1 });
-        res.status(401).json({ error: 'Unauthorized' });
+        res.status(401).json({ error: 'Unauthorized1' });
       }
-
       res.locals.user = user;
-      return next();
     } catch {
       res.status(401).json({ error: 'Unauthorized' });
     }
+
+    return next();
   }
 }
 

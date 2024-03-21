@@ -8,13 +8,13 @@ const AppController_1 = __importDefault(require("../controllers/AppController"))
 const usersController_1 = __importDefault(require("../controllers/usersController"));
 const favoritesController_1 = __importDefault(require("../controllers/favoritesController"));
 const middleware_1 = __importDefault(require("../utils/middleware"));
-const authMiddleware = middleware_1.default.protectedRoute;
+const authMiddleware = middleware_1.default.auth;
 const apiRouter = express_1.default.Router();
 apiRouter.get('/status', AppController_1.default.status);
 apiRouter.post('/signup', usersController_1.default.signUp);
 apiRouter.post('/login', usersController_1.default.login);
 apiRouter.delete('/logout', usersController_1.default.logout);
-apiRouter.get('/getlist', authMiddleware, favoritesController_1.default.getFavorites);
-apiRouter.post('/addlist', authMiddleware, favoritesController_1.default.addToFavorite);
-apiRouter.delete('/rmlist', authMiddleware, favoritesController_1.default.removeFromFavorite);
+apiRouter.get('/favorite', authMiddleware, favoritesController_1.default.getFavorites);
+apiRouter.post('/favorite', authMiddleware, favoritesController_1.default.addToFavorite);
+apiRouter.delete('/favorite', authMiddleware, favoritesController_1.default.removeFromFavorite);
 exports.default = apiRouter;
