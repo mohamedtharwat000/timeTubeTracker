@@ -18,12 +18,22 @@ class PlaylistController {
     res: Response,
   ): Promise<Response> {
     const { playlistURL } = req.body;
+    const re = /list=([\w-]+)|^([\w-]+)$/;
 
     if (!playlistURL) {
       return res.status(400).json({ error: 'Missing Playlist URL' });
     }
 
-    return YouTubeHandler.fetchPlaylistVideosIDs(playlistURL)
+    if (!re.test(playlistURL)) {
+      return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
+    }
+
+    return YouTubeHandler.fetchPlaylistVideosIDs(
+      playlistURL
+        .match(re)[0]
+        .split('list=')
+        .filter((e: string) => e),
+    )
       .then(async (data) => {
         const dataDuration = await YouTubeHandler.fetchVideosDuration(data);
 
@@ -61,7 +71,7 @@ class PlaylistController {
           ),
         });
       })
-      .catch(() => res.status(400).json({ error: 'Invalud Playlist URL' }));
+      .catch(() => res.status(400).json({ error: 'Invalid Playlist ID' }));
   }
 }
 
