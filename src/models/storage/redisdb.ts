@@ -45,18 +45,19 @@ class RedisClient {
     key: string,
     value: string,
     expiresIn?: number,
-  ): Promise<void> {
+  ): Promise<string> {
     if (expiresIn) {
       this.client.set(key, value, { EX: expiresIn }, (err) => {
         if (err) return err;
         return value;
       });
-    } else {
-      this.client.set(key, value, (err) => {
-        if (err) return err;
-        return value;
-      });
     }
+    this.client.set(key, value, (err) => {
+      if (err) return err;
+      return value;
+    });
+
+    return value;
   }
 
   /**
@@ -85,24 +86,17 @@ class RedisClient {
     });
   }
 
-  public async exists(key): Promise<boolean> {
+  /**
+   * Check if value exists in Redis.
+   * @param key - The key to check.
+   * @returns Promise<bool>
+   */
+  public async exists(key: string): Promise<boolean> {
     return this.client.exists(key, (err, reply) => {
       if (err) {
         return false;
       }
       return reply === 1;
-    });
-  }
-
-  /**
-   * Closes the Redis connection.
-   */
-  public async close(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.client.quit((err) => {
-        if (err) reject(err);
-        else resolve();
-      });
     });
   }
 }
