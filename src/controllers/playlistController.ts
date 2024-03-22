@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import YouTubeHandler from '../utils/apiRequests';
 import msToHMS from '../utils/msToHMS';
-import redisClient from '../models/storage/redisdb';
+// import redisClient from '../models/storage/redisdb';
 
 class PlaylistController {
   /**
@@ -34,7 +34,7 @@ class PlaylistController {
       const data = await PlaylistController.calculatePlaylist(
         extractedURL,
         start, // Use the start property
-        end, // Use the end property
+        end,
       );
 
       // if (data.error) {
@@ -73,7 +73,6 @@ class PlaylistController {
 
         const fullDurationInMs = {};
         dataDuration.slice(start - 1, end).forEach((ele) => {
-          console.log(playlistId);
           // eslint-disable-next-line no-restricted-syntax
           for (const speed of [1, 1.25, 1.5, 1.75, 2]) {
             fullDurationInMs[`${speed}x`] ??= 0;
