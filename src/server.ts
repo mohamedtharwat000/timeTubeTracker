@@ -7,6 +7,7 @@ import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index';
 import apiRouter from './routes/api';
+import Middleware from './utils/middleware';
 
 dotenv.config();
 
@@ -19,9 +20,12 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(cors());
 
+const authMiddleware = Middleware.auth;
+app.use(authMiddleware);
+
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '/static')));
 app.set('views', path.join(__dirname, '/views'));
+app.use(express.static(path.join(__dirname, '/static')));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', indexRouter);
