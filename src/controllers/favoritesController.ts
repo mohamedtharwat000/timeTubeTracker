@@ -52,7 +52,7 @@ class FavoritesController {
     res: Response,
   ): Promise<Response> {
     const { user } = res.locals;
-    const { playlistURL } = req.body;
+    const playlistId = req.params.id;
 
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -61,17 +61,17 @@ class FavoritesController {
     // eslint-disable-next-line no-underscore-dangle
     const userId: string = user._id;
 
-    if (user.favorites.includes(playlistURL)) {
+    if (user.favorites.includes(playlistId)) {
       await User.findByIdAndUpdate(userId, {
         $pull: {
-          favorites: playlistURL,
+          favorites: playlistId,
         },
       });
 
       return res.status(200).json({
         success: {
           message: 'Playlist deleted successfully',
-          playlist: playlistURL,
+          playlist: playlistId,
           userId,
         },
       });
