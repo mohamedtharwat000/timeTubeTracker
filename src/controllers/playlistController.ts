@@ -116,7 +116,14 @@ class PlaylistController {
             fullDurationInMs[`${speed}x`] += parseInt(ele, 10) / speed;
           }
         });
-        const fullData = {
+
+        await redisClient.set(
+          `${playlistId}`,
+          JSON.stringify(dataDuration),
+          3600 * 24, // 24 hours
+        );
+
+        return {
           totalPlaylistVideos: dataLength,
           totalVideos: end - start + 1,
           averageDuration: msToHMS(fullDurationInMs['1x'] / (end - start + 1)),
@@ -131,12 +138,6 @@ class PlaylistController {
             ),
           },
         };
-        await redisClient.set(
-          `${playlistId}`,
-          JSON.stringify(dataDuration),
-          3600 * 24, // 24 hours
-        );
-        return fullData;
       })
       .catch((err) => ({ error: `Invalid Playlist ID: ${err}` }));
   }
