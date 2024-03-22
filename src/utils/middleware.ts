@@ -20,39 +20,33 @@ class Middleware {
     req: Request,
     res: Response,
     next: NextFunction,
-  ): Promise<Response | void> {
-    const token: string | undefined = req.cookies.sessionId;
+  ): Promise<void> {
+    const sessionIdToken: string | undefined = req.cookies.sessionId;
+    const jwtToken: string | undefined = req.headers.authorization;
     const { secretKey } = process.env;
 
-    if (!token) {
+    if ((!sessionIdToken && !jwtToken) || !secretKey) {
       res.locals.user = null;
       return next();
     }
 
-    if (!secretKey) {
-      throw new Error('Secret key not found in environment variables.');
+    const payload = jwt.verify(sessionIdToken || jwtToken, secretKey);
+    const { email, username } = payload as {
+      email: string;
+      username: string;
+    };
+
+    const user: UserInterface = await User.findOne({
+      email,
+      username,
+    }).exec();
+
+    if (!user) {
+      res.cookie('sessionId', '', { maxAge: 1 });
+      res.locals.user = null;
     }
 
-    try {
-      const payload = jwt.verify(token, secretKey);
-      const { email, username } = payload as {
-        email: string;
-        username: string;
-      };
-
-      const user: UserInterface | null = await User.findOne({
-        email,
-        username,
-      }).exec();
-
-      if (!user) {
-        res.cookie('sessionId', '', { maxAge: 1 });
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-      res.locals.user = user;
-    } catch {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    res.locals.user = user;
 
     return next();
   }
