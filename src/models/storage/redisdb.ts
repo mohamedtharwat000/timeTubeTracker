@@ -48,7 +48,7 @@ class RedisClient {
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       if (expiresIn) {
-        this.client.set(key, value, 'EX', expiresIn, (err) => {
+        this.client.set(key, value, { EX: expiresIn }, (err) => {
           if (err) reject(err);
           else resolve();
         });
