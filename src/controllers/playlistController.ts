@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import YouTubeHandler from '../utils/apiRequests';
 import msToHMS from '../utils/msToHMS';
-// import redisClient from '../models/storage/redisdb';
+import redisClient from '../models/storage/redisdb';
 
 class PlaylistController {
   /**
@@ -81,16 +81,19 @@ class PlaylistController {
    */
 
   static async calculatePlaylist(playlistId: string, reqStart, reqEnd) {
-    // const cachedPlaylist = await redisClient.get(playlistId);
+    const cachedPlaylistExists = await redisClient.exists(playlistId);
 
-    // if (cachedPlaylist) {
-    //   return JSON.parse(cachedPlaylist);
-    // }
-    return YouTubeHandler.fetchPlaylistVideosIDs(playlistId)
+    return (
+      cachedPlaylistExists
+        ? redisClient.get(playlistId)
+        : YouTubeHandler.fetchPlaylistVideosIDs(playlistId)
+    )
       .then(async (data) => {
-        const dataDuration = await YouTubeHandler.fetchVideosDuration(data);
-        const dataLength = dataDuration.length;
+        const dataDuration = cachedPlaylistExists
+          ? JSON.parse(await redisClient.get(playlistId))
+          : await YouTubeHandler.fetchVideosDuration(data);
 
+        const dataLength = dataDuration.length;
         const start = reqStart ?? 1;
         const end = reqEnd ?? dataLength;
 
@@ -128,10 +131,14 @@ class PlaylistController {
             ),
           },
         };
-        // redisClient.set(`${playlistId}`, JSON.stringify(fullData), 3600);
+        await redisClient.set(
+          `${playlistId}`,
+          JSON.stringify(dataDuration),
+          3600 * 24, // 24 hours
+        );
         return fullData;
       })
-      .catch(() => ({ error: 'Invalid Playlist ID' }));
+      .catch((err) => ({ error: `Invalid Playlist ID: ${err}` }));
   }
 }
 
