@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import paginateArray from './pagination';
@@ -68,33 +69,23 @@ export default class YouTubeHandler {
   static async fetchVideosDuration(ids: string[]): Promise<string[]> {
     const { apiKey } = process.env!;
     const maxResults = 50;
-    const videos: string[] = [];
+    const videos = [];
 
     if (!Array.isArray(ids)) {
-      throw new Error('Broken array: video IDs');
+      throw new Error('Broken array of videos ids');
     }
 
-    const pages = Array.from(
-      { length: Math.ceil(ids.length / maxResults) },
-      (_, i) => i + 1,
-    );
-
-    await Promise.all(
-      pages.map(async (i) => {
-        const response = await youtube.videos.list({
-          part: ['contentDetails'],
-          key: apiKey,
-          id: paginateArray(i, maxResults, ids) as [],
-        });
-        videos.push(
-          ...response.data.items.map(
-            (item) => parseIso8601Duration(item.contentDetails.duration),
-            // eslint-disable-next-line function-paren-newline
-          ),
-        );
-      }),
-    );
-
-    return videos;
+    for (let i = 1; i <= Math.ceil(ids.length / maxResults); i += 1) {
+      videos.push(
+        ...(
+          await youtube.videos.list({
+            part: ['contentDetails'],
+            key: apiKey,
+            id: paginateArray(i, maxResults, ids) as [],
+          })
+        ).data.items,
+      );
+    }
+    return videos.map((e) => parseIso8601Duration(e.contentDetails.duration));
   }
 }

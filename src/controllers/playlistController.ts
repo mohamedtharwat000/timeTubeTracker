@@ -12,7 +12,19 @@ class PlaylistController {
     res: Response,
   ): Promise<Response> {
     const playLists = req.body.playlists as [];
-    const playlistsData = [];
+    const playlistsData = {
+      sum: {
+        totalVideos: 0,
+        durations: {
+          '1x': 0,
+          '1.25x': 0,
+          '1.5x': 0,
+          '1.75x': 0,
+          '2x': 0,
+        },
+      },
+      playlists: [],
+    };
     const re = /list=([\w-]+)|^([\w-]+)$/;
 
     // eslint-disable-next-line no-restricted-syntax
@@ -30,20 +42,38 @@ class PlaylistController {
       }
 
       const { start, end } = playlist;
-
       const data = await PlaylistController.calculatePlaylist(
         extractedURL,
-        start, // Use the start property
+        start,
         end,
       );
 
-      // if (data.error) {
-      //   return res.status(400).json(data);
-      // }
-      playlistsData.push(data);
+      if ('error' in data) {
+        return res.status(400).json(data);
+      }
+      playlistsData.playlists.push(data);
+      playlistsData.sum.totalVideos += data.totalVideos;
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const speed of [1, 1.25, 1.5, 1.75, 2]) {
+        const value = Number(data.durationInMs) / speed;
+        playlistsData.sum.durations[`${speed}x`] += value;
+      }
     }
 
-    return res.status(200).json(playlistsData);
+    return res.status(200).json({
+      sum: {
+        totalVideos: playlistsData.sum.totalVideos,
+        durations: {
+          ...Object.fromEntries(
+            Object.entries(playlistsData.sum.durations).map(
+              ([speed, duration]) => [`${speed}`, msToHMS(duration)],
+            ),
+          ),
+        },
+      },
+      playlists: playlistsData.playlists,
+    });
   }
 
   /**
@@ -59,12 +89,15 @@ class PlaylistController {
     return YouTubeHandler.fetchPlaylistVideosIDs(playlistId)
       .then(async (data) => {
         const dataDuration = await YouTubeHandler.fetchVideosDuration(data);
+        const dataLength = dataDuration.length;
+
         const start = reqStart ?? 1;
-        const end = reqEnd ?? dataDuration.length;
-        if (!start || start <= 0 || start > dataDuration.length) {
+        const end = reqEnd ?? dataLength;
+
+        if (!start || start <= 0 || start > dataLength) {
           return { error: 'Invalid Start index' };
         }
-        if (!end || end <= 0 || end > dataDuration.length) {
+        if (!end || end <= 0 || end > dataLength) {
           return { error: 'Invalid End index' };
         }
         if (start > end) {
@@ -72,6 +105,7 @@ class PlaylistController {
         }
 
         const fullDurationInMs = {};
+
         dataDuration.slice(start - 1, end).forEach((ele) => {
           // eslint-disable-next-line no-restricted-syntax
           for (const speed of [1, 1.25, 1.5, 1.75, 2]) {
@@ -80,10 +114,11 @@ class PlaylistController {
           }
         });
         const fullData = {
-          totalPlaylistVideos: dataDuration.length,
+          totalPlaylistVideos: dataLength,
           totalVideos: end - start + 1,
           averageDuration: msToHMS(fullDurationInMs['1x'] / (end - start + 1)),
           indexes: { start, end },
+          durationInMs: fullDurationInMs['1x'],
           durations: {
             ...Object.fromEntries(
               Object.entries(fullDurationInMs).map(([speed, duration]) => [
