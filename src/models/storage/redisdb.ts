@@ -46,19 +46,17 @@ class RedisClient {
     value: string,
     expiresIn?: number,
   ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (expiresIn) {
-        this.client.set(key, value, 'EX', expiresIn, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      } else {
-        this.client.set(key, value, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      }
-    });
+    if (expiresIn) {
+      this.client.set(key, value, { EX: expiresIn }, (err) => {
+        if (err) return err;
+        return value;
+      });
+    } else {
+      this.client.set(key, value, (err) => {
+        if (err) return err;
+        return value;
+      });
+    }
   }
 
   /**
@@ -67,11 +65,11 @@ class RedisClient {
    * @returns Promise<string | null>
    */
   public async get(key: string): Promise<string | null> {
-    return new Promise((resolve, reject) => {
-      this.client.get(key, (err, value) => {
-        if (err) reject(err);
-        else resolve(value);
-      });
+    return this.client.get(key, (err, value) => {
+      if (err) {
+        return err;
+      }
+      return value;
     });
   }
 
@@ -81,11 +79,18 @@ class RedisClient {
    * @returns Promise<number>
    */
   public async del(key: string): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.client.del(key, (err, numDeleted) => {
-        if (err) reject(err);
-        else resolve(numDeleted);
-      });
+    return this.client.del(key, (err, numDeleted) => {
+      if (err) return err;
+      return numDeleted;
+    });
+  }
+
+  public async exists(key): Promise<boolean> {
+    return this.client.exists(key, (err, reply) => {
+      if (err) {
+        return false;
+      }
+      return reply === 1;
     });
   }
 

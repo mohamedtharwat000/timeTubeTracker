@@ -22,6 +22,6 @@ apiRouter.delete(
   FavoritesController.removeFromFavorite,
 );
 
-apiRouter.post('/playlist', PlaylistController.calculatePlaylist);
+apiRouter.post('/playlist', PlaylistController.calculateMulitplePlaylists);
 
 export default apiRouter;
