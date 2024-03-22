@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { type } from 'hlputils';
 import YouTubeHandler from '../utils/apiRequests';
 import msToHMS from '../utils/msToHMS';
 import redisClient from '../models/storage/redisdb';
@@ -12,6 +13,11 @@ class PlaylistController {
     res: Response,
   ): Promise<Response> {
     const playLists = req.body.playlists as [];
+
+    if (!playLists || type(playLists) !== 'array' || playLists.length === 0) {
+      return res.status(401).json({ error: 'no url provided' });
+    }
+
     const playlistsData = {
       sum: {
         totalVideos: 0,
@@ -28,8 +34,7 @@ class PlaylistController {
     const re = /list=([\w-]+)|^([\w-]+)$/;
 
     // eslint-disable-next-line no-restricted-syntax
-    for await (const playlist of playLists) {
-      const { playlistURL } = playlist;
+    for await (const playlistURL of playLists) {
       if (!playlistURL) {
         return res.status(400).json({ error: 'Missing Playlist URL' });
       }
@@ -41,7 +46,7 @@ class PlaylistController {
         return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
       }
 
-      const { start, end } = playlist;
+      const { start, end } = playlistURL;
       const data = await PlaylistController.calculatePlaylist(
         extractedURL,
         start,
