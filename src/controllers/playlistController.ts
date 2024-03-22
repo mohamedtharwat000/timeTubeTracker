@@ -34,7 +34,8 @@ class PlaylistController {
     const re = /list=([\w-]+)|^([\w-]+)$/;
 
     // eslint-disable-next-line no-restricted-syntax
-    for await (const playlistURL of playLists) {
+    for await (const playlist of playLists) {
+      const { playlistURL } = playlist;
       if (!playlistURL) {
         return res.status(400).json({ error: 'Missing Playlist URL' });
       }
@@ -46,7 +47,7 @@ class PlaylistController {
         return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
       }
 
-      const { start, end } = playlistURL;
+      const { start, end } = playlist;
       const data = await PlaylistController.calculatePlaylist(
         extractedURL,
         start,
