@@ -7,7 +7,7 @@
   "plugins": ["@typescript-eslint", "@stylistic", "prettier"],
   "extends": [
     // "plugin:@stylistic/recommended-extends",
-    // "plugin:@stylistic/disable-legacy",
+    "plugin:@stylistic/disable-legacy",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/stylistic",
     "plugin:prettier/recommended",
@@ -20,7 +20,6 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "import/extensions": "off",
-    "prefer-promise-reject-errors": "off"
+    "import/extensions": "off"
   }
 }
