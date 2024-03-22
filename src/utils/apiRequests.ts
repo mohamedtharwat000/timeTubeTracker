@@ -45,13 +45,12 @@ export default class YouTubeHandler {
       });
 
       if (data.nextPageToken) {
-        const newVides = await this.fetchPlaylistVideosIDs(
+        const newVideos = await this.fetchPlaylistVideosIDs(
           playlistURL,
           data.nextPageToken,
         );
-        videosIdsObj.push(...newVides);
+        videosIdsObj.push(...newVideos);
       }
-
       return videosIdsObj;
     } catch (err) {
       throw new Error(
