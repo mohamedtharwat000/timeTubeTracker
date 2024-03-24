@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { type } from 'hlputils';
 import YouTubeHandler from '../utils/apiRequests';
 import msToHMS from '../utils/msToHMS';
 import redisClient from '../models/storage/redisdb';
@@ -12,6 +13,11 @@ class PlaylistController {
     res: Response,
   ): Promise<Response> {
     const playLists = req.body.playlists as [];
+
+    if (!playLists || type(playLists) !== 'array' || playLists.length === 0) {
+      return res.status(401).json({ error: 'no url provided' });
+    }
+
     const playlistsData = {
       sum: {
         totalVideos: 0,

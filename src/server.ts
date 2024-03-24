@@ -1,12 +1,16 @@
 import express, { Express } from 'express';
+import ms from 'ms';
 import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
-import indexRouter from './routes/index';
+import { rateLimit } from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
 import apiRouter from './routes/api';
+import indexRouter from './routes/index';
+import Middleware from './utils/middleware';
 
 dotenv.config();
 
@@ -19,9 +23,22 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(cors());
 
+app.use(mongoSanitize());
+
+app.use(
+  rateLimit({
+    windowMs: ms('1m'),
+    limit: 10,
+    message: { error: 'Too many requests. Please try again after 10 minutes' },
+  }),
+);
+
+const authMiddleware = Middleware.auth;
+app.use(authMiddleware);
+
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '/static')));
 app.set('views', path.join(__dirname, '/views'));
+app.use(express.static(path.join(__dirname, '/static')));
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', indexRouter);
