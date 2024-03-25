@@ -72,13 +72,13 @@ class UserController {
     }).exec();
 
     if (!user) {
-      return res.status(404).send({ error: 'User not found' });
+      return res.status(404).send({ error: 'User was not found' });
     }
 
     const isValid: boolean = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(404).json({ error: 'User was not found' });
     }
 
     const token: string = auth.generateToken(
@@ -93,7 +93,7 @@ class UserController {
   }
 
   /**
-   * DELETE /api/logout
+   * GET /api/logout
    * Logout a user from the session
    * And save the token to the blacklist cache list
    *
@@ -109,7 +109,7 @@ class UserController {
     }
 
     res.cookie('sessionId', '', { maxAge: 1 });
-    return res.status(200).json({ success: 'logged out' });
+    return res.redirect('/');
   }
 }
 

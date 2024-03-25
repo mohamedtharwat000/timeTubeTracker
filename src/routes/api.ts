@@ -20,7 +20,7 @@ apiRouter.get('/status', AppController.status);
 
 apiRouter.post('/signup', UserController.signUp);
 apiRouter.post('/login', UserController.login);
-apiRouter.delete('/logout', UserController.logout);
+apiRouter.get('/logout', UserController.logout);
 
 apiRouter.get('/favorite', FavoritesController.getFavorites);
 apiRouter.post('/favorite', FavoritesController.addToFavorite);

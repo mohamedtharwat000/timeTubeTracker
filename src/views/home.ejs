@@ -5,28 +5,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/main.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <style>
+        form i {
+            /* margin-left: -30px; */
+            cursor: pointer;
+        }
+    </style>
     <title>
         <%= title %> | TimeTubeTracker
     </title>
 </head>
 
 <body>
-    <nav>
-        <h1> Home Page - TimeTubeTracker </h1>
-        <ul>
-            <% if (user) { %>
-                <li>Welcome, <%= user.username %>
-                </li>
-                <li><a href="/logout">Log out</a></li>
-                <% } else { %>
-                    <li><a href="/login">Log in</a></li>
-                    <li><a href="/signup" class="btn">Sign up</a></li>
-                    <% } %>
-        </ul>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark px-5-md">
+        <div class="container-fluid">
+            <a href="#home" class="navbar-brand fs-3 fw-bold"> TimeTubeTracker </a>
+
+            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                aria-controls="home-navebar" data-bs-target="#home-navebar" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse justify-content-end" id="home-navebar" style>
+                <ul class="navbar-nav">
+                    <li class="nav-item p-2">
+                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class=" btn btn-primary fs-5"
+                            target="_blank" role="button"><i class="bi bi-github"></i></a>
+                    </li>
+                    <% if (user) { %>
+                        <li class="nav-item p-2">
+                            <a href="#" class=" btn btn-primary fs-5" role="button">Favorites</a>
+                        </li>
+                        <li class="nav-item p-2">
+                            <a href="/api/logout" class=" btn btn-primary fs-5" role="button">Logout</a>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#login-modal">Log in</button>
+                            </li>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5">Sign up</button>
+                            </li>
+                            <% } %>
+                </ul>
+            </div>
+
+        </div>
     </nav>
 
+
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="login-modal-title">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="loginForm">
+                    <div class="modal-body">
+                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-usernameEmail" class="form-label">Email or Username</label>
+                            <input type="text" id="login-usernameEmail" class="form-control"
+                                placeholder="Enter your email or username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" id="login-password" class="form-control"
+                                placeholder="Enter your password">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="login-rememberMe" class="form-check-input">
+                            <label for="login-rememberMe" class="form-check-label">Remember Me</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section></section>
+    <footer></footer>
 </body>
+<script src="/js/bootstrap.min.js"> </script>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent form submission
+        const usernameEmail = document.getElementById('login-usernameEmail').value;
+        const password = document.getElementById('login-password').value;
+        const rememberMe = document.getElementById('login-rememberMe').checked;
+        const errorSection = document.getElementById('errorAlert');
+        document.getElementById('errorAlert').classList.add('d-none');
+
+        fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: usernameEmail,
+                email: usernameEmail,
+                password: password,
+                rememberMe: rememberMe,
+            }),
+        }).then(async (response) => {
+            const data = await response.json();
+            if (!response.ok) {
+                console.log(data);
+                errorSection.classList.remove('d-none');
+                errorSection.innerHTML = data.error;
+                return;
+            }
+            console.log(data);
+            location.reload();
+        })
+    });
+</script>
 
 </html>
