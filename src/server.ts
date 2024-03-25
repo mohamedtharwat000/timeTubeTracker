@@ -29,7 +29,7 @@ app.use(
   rateLimit({
     windowMs: ms('1m'),
     limit: 10,
-    message: { error: 'Too many requests. Please try again after 10 minutes' },
+    message: { error: 'Too many requests. Please try again after 1 minute' },
   }),
 );
 
