@@ -1,10 +1,20 @@
 import express, { Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import ms from 'ms';
 import AppController from '../controllers/appController';
 import UserController from '../controllers/usersController';
 import FavoritesController from '../controllers/favoritesController';
 import PlaylistController from '../controllers/playlistController';
 
 const apiRouter: Router = express.Router();
+
+apiRouter.use(
+  rateLimit({
+    windowMs: ms('1m'),
+    limit: 20,
+    message: { error: 'Too many requests. Please try again after 1 minute' },
+  }),
+);
 
 apiRouter.get('/status', AppController.status);
 

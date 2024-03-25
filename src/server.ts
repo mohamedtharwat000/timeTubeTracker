@@ -1,12 +1,10 @@
 import express, { Express } from 'express';
-import ms from 'ms';
 import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
-import { rateLimit } from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import apiRouter from './routes/api';
 import indexRouter from './routes/index';
@@ -24,14 +22,6 @@ app.use(helmet());
 app.use(cors());
 
 app.use(mongoSanitize());
-
-app.use(
-  rateLimit({
-    windowMs: ms('1m'),
-    limit: 10,
-    message: { error: 'Too many requests. Please try again after 10 minutes' },
-  }),
-);
 
 const authMiddleware = Middleware.auth;
 app.use(authMiddleware);
