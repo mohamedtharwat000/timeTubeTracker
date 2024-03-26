@@ -28,12 +28,12 @@ app.use(mongoSanitize());
 app.use(
   rateLimit({
     windowMs: ms('1m'),
-    limit: 30,
+    limit: 300,
     message: { error: 'Too many requests. Please try again after 1 minutes' },
   }),
 );
 
-app.use(express.static(path.join(__dirname, 'static')));
+app.use('/static', express.static(path.join(__dirname, 'static')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 

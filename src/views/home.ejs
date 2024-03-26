@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script defer src="/static/js/bootstrap.bundle.min.js"></script>
     <script defer src="/static/js/script.js"></script>
-    <title><%= title %> | TimeTubeTracker</title>
+    <title>
+        <%= title %> | TimeTubeTracker
+    </title>
 </head>
 
 <body>
@@ -29,22 +31,22 @@
                             target="_blank" role="button"><i class="bi bi-github"></i></a>
                     </li>
                     <% if (user) { %>
-                    <li class="nav-item p-2">
-                        <a href="#" class="btn btn-primary fs-5" role="button">Favorites</a>
-                    </li>
-                    <li class="nav-item p-2">
-                        <a href="/api/logout" class="btn btn-primary fs-5" role="button">Logout</a>
-                    </li>
-                    <% } else { %>
-                    <li class="nav-item p-2">
-                        <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
-                            data-bs-target="#login-modal">Log in</button>
-                    </li>
-                    <li class="nav-item p-2">
-                        <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
-                            data-bs-target="#signup-modal">Sign up</button>
-                    </li>
-                    <% } %>
+                        <li class="nav-item p-2">
+                            <a href="#" class="btn btn-primary fs-5" role="button">Favorites</a>
+                        </li>
+                        <li class="nav-item p-2">
+                            <a href="/logout" class="btn btn-primary fs-5" role="button">Logout</a>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#login-modal">Log in</button>
+                            </li>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#signup-modal">Sign up</button>
+                            </li>
+                            <% } %>
                 </ul>
             </div>
         </div>
@@ -85,11 +87,11 @@
                 </div>
                 <form method="POST" id="loginForm">
                     <div class="modal-body">
-                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                        <div id="loginErrorAlert" class="alert alert-danger d-none" role="alert">
                         </div>
                         <div class="mb-3">
                             <label for="login-usernameEmail" class="form-label">Email or Username</label>
-                            <input type="text" id="login-usernameEmail" class="form-control"
+                            <input type="text" id="login-usernameOrEmail" class="form-control"
                                 placeholder="Enter your email or username">
                         </div>
                         <div class="mb-3">
@@ -121,17 +123,15 @@
                 </div>
                 <form method="POST" id="signupForm">
                     <div class="modal-body">
-                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                        <div id="signupErrorAlert" class="alert alert-danger d-none" role="alert">
                         </div>
                         <div class="mb-3">
                             <label for="signup-username" class="form-label">Username</label>
-                            <input type="text" id="signup-username" class="form-control"
-                                placeholder="Enter a username">
+                            <input type="text" id="signup-username" class="form-control" placeholder="Enter a username">
                         </div>
                         <div class="mb-3">
                             <label for="signup-email" class="form-label">Email</label>
-                            <input type="email" id="signup-email" class="form-control"
-                                placeholder="Enter your email">
+                            <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
                         </div>
                         <div class="mb-3">
                             <label for="signup-password" class="form-label">Password</label>
@@ -159,7 +159,8 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5>About TimeTubeTracker</h5>
-                    <p>TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never miss
+                    <p>TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never
+                        miss
                         your favorite channels again.</p>
                 </div>
             </div>

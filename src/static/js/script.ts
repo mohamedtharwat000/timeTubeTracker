@@ -14,7 +14,7 @@ document
     const errorSection = document.getElementById('errorAlert') as HTMLElement;
     errorSection.classList.add('d-none');
 
-    fetch('http://localhost:5000/api/login', {
+    fetch('http://localhost:5000/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,5 +25,14 @@ document
         password,
         rememberMe,
       }),
-    }).then(async () => '');
+    }).then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data);
+        errorSection.classList.remove('d-none');
+        errorSection.innerHTML = data.error;
+        return;
+      }
+      console.log(data);
+    });
   });
