@@ -11,6 +11,6 @@ apiRouter.post('/playlist', PlaylistController.calculateMulitplePlaylists);
 
 apiRouter.get('/favorite', FavoritesController.getFavorites);
 apiRouter.post('/favorite', FavoritesController.addToFavorite);
-apiRouter.delete('/favorite:id', FavoritesController.removeFromFavorite);
+apiRouter.delete('/favorite/:id', FavoritesController.removeFromFavorite);
 
 export default apiRouter;
