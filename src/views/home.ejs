@@ -7,12 +7,9 @@
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/bootstrap-icons.css">
-    <style>
-        form i {
-            /* margin-left: -30px; */
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/bootstrap.bundle.min.js"></script>
+    <script defer src="/static/js/script.js"></script>
     <title>
         <%= title %> | TimeTubeTracker
     </title>
@@ -98,39 +95,5 @@
     <section></section>
     <footer></footer>
 </body>
-<script src="/static/js/bootstrap.min.js"> </script>
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent form submission
-        const usernameEmail = document.getElementById('login-usernameEmail').value;
-        const password = document.getElementById('login-password').value;
-        const rememberMe = document.getElementById('login-rememberMe').checked;
-        const errorSection = document.getElementById('errorAlert');
-        document.getElementById('errorAlert').classList.add('d-none');
-
-        fetch('http://localhost:5000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: usernameEmail,
-                email: usernameEmail,
-                password: password,
-                rememberMe: rememberMe,
-            }),
-        }).then(async (response) => {
-            const data = await response.json();
-            if (!response.ok) {
-                console.log(data);
-                errorSection.classList.remove('d-none');
-                errorSection.innerHTML = data.error;
-                return;
-            }
-            console.log(data);
-            location.reload();
-        })
-    });
-</script>
 
 </html>
