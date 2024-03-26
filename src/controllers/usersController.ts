@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { objectProto } from 'hlputils';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import generateToken from '../utils/generateToken';
@@ -54,9 +53,8 @@ class UserController {
       })
       .then(() => res.status(200).json({ registered: { email, username } }))
       .catch((err) => {
-        objectProto();
         if (err.code === 11000) {
-          const duplicateKeyField: string = err.keyPattern.keys()[0];
+          const duplicateKeyField: string = Object.keys(err.keyValue)[0];
           return res
             .status(400)
             .json({ error: `${duplicateKeyField} already exists.` });
