@@ -1,12 +1,18 @@
 document
   .getElementById('loginForm')
-  .addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent form submission
-    const usernameEmail = document.getElementById('login-usernameEmail').value;
-    const password = document.getElementById('login-password').value;
-    const rememberMe = document.getElementById('login-rememberMe').checked;
-    const errorSection = document.getElementById('errorAlert');
-    document.getElementById('errorAlert').classList.add('d-none');
+  .addEventListener('submit', async (event: Event) => {
+    event.preventDefault();
+    const usernameOrEmail = (
+      document.getElementById('login-usernameOrEmail') as HTMLInputElement
+    ).value;
+    const password = (
+      document.getElementById('login-password') as HTMLInputElement
+    ).value;
+    const rememberMe = (
+      document.getElementById('login-rememberMe') as HTMLInputElement
+    ).checked;
+    const errorSection = document.getElementById('errorAlert') as HTMLElement;
+    errorSection.classList.add('d-none');
 
     fetch('http://localhost:5000/api/login', {
       method: 'POST',
@@ -14,20 +20,10 @@ document
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: usernameEmail,
-        email: usernameEmail,
-        password: password,
-        rememberMe: rememberMe,
+        username: usernameOrEmail,
+        email: usernameOrEmail,
+        password,
+        rememberMe,
       }),
-    }).then(async (response) => {
-      const data = await response.json();
-      if (!response.ok) {
-        console.log(data);
-        errorSection.classList.remove('d-none');
-        errorSection.innerHTML = data.error;
-        return;
-      }
-      console.log(data);
-      location.reload();
-    });
+    }).then(async () => '');
   });
