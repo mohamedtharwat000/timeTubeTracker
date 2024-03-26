@@ -126,7 +126,7 @@ class PlaylistController {
         await redisClient.set(
           `${playlistId}`,
           JSON.stringify(dataDuration),
-          3600 * 24, // 24 hours
+          { EX: 3600 * 24 }, // 24 hours
         );
 
         return {

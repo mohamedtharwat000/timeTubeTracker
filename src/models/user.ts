@@ -1,19 +1,23 @@
-import { Schema, model } from 'mongoose';
-import { isEmail } from 'validator';
-import UserInterface from './userInterface';
+import { Schema, model, Document } from 'mongoose';
+
+export interface UserInterface extends Document {
+  username: string;
+  email: string;
+  password: string;
+  createdAt: Date;
+  favorites: string[];
+}
 
 const userSchema = new Schema<UserInterface>({
   username: {
     type: String,
     required: true,
     unique: true,
-    minlength: [4, 'Username must be at least 4 characters long'],
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    validate: [isEmail, 'Email address must be a valid email address'],
   },
   password: {
     type: String,

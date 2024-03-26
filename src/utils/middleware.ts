@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import User from '../models/users/user';
-import UserInterface from '../models/users/userInterface';
+import User, { UserInterface } from '../models/user';
 
 dotenv.config();
 
@@ -21,32 +20,36 @@ class Middleware {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    const sessionIdToken: string | undefined = req.cookies.sessionId;
-    const jwtToken: string | undefined = req.headers.authorization;
+    const { sessionId } = req.cookies;
+    const { authorization } = req.headers;
     const { secretKey } = process.env;
 
-    if ((!sessionIdToken && !jwtToken) || !secretKey) {
+    if ((!sessionId && !authorization) || !secretKey) {
       res.locals.user = null;
       return next();
     }
 
-    const payload = jwt.verify(sessionIdToken || jwtToken, secretKey);
-    const { email, username } = payload as {
-      email: string;
-      username: string;
-    };
+    try {
+      const payload = jwt.verify(sessionId || authorization, secretKey);
+      const { email, username } = payload as {
+        email: string;
+        username: string;
+      };
 
-    const user: UserInterface = await User.findOne({
-      email,
-      username,
-    }).exec();
+      const user: UserInterface = await User.findOne({
+        $or: [{ email }, { username }],
+      }).exec();
 
-    if (!user) {
-      res.cookie('sessionId', '', { maxAge: 1 });
+      if (!user) {
+        res.clearCookie('sessionId');
+        res.locals.user = null;
+      }
+
+      res.locals.user = user;
+    } catch (error) {
+      res.clearCookie('sessionId');
       res.locals.user = null;
     }
-
-    res.locals.user = user;
 
     return next();
   }

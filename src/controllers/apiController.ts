@@ -5,7 +5,7 @@ import redisClient from '../models/storage/redisdb';
 /**
  * App Controller handles some routes
  */
-class AppController {
+class ApiController {
   /**
    * GET /api/status
    * checks the status of the database and redis
@@ -16,13 +16,13 @@ class AppController {
    */
   static status(_req: Request, res: Response) {
     const mongoState: number = mongodb.readyState;
-    const redisState: boolean = redisClient.connected();
+    const redisState: boolean = redisClient.isOpen;
 
     if (mongoState === 1 && redisState) {
-      return res.status(200).json({ status: 'api ready' });
+      return res.status(200).json({ status: 'ready' });
     }
-    return res.status(500).json({ error: 'api not ready' });
+    return res.status(500).json({ error: 'not ready' });
   }
 }
 
-export default AppController;
+export default ApiController;

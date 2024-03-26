@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
+import { objectProto } from 'hlputils';
+import validator from 'validator';
 import bcrypt from 'bcrypt';
-import auth from '../utils/auth';
-import User from '../models/users/user';
-import UserInterface from '../models/users/userInterface';
+import generateToken from '../utils/generateToken';
+import setSessionCookie from '../utils/setSessionCookie';
+import User, { UserInterface } from '../models/user';
 
 /**
  * Class representing user controller methods.
@@ -23,6 +25,22 @@ class UserController {
         .send({ error: 'Email, username and password are required' });
     }
 
+    const ifValidEmail: boolean = validator.isEmail(email);
+    const ifValidUsername: boolean = validator.isAlphanumeric(username);
+    const ifValidPassword: boolean = validator.isStrongPassword(password);
+
+    if (!ifValidEmail) {
+      return res.status(400).json({ error: 'Invalid email' });
+    }
+
+    if (!ifValidUsername) {
+      return res.status(400).json({ error: 'Invalid username' });
+    }
+
+    if (!ifValidPassword) {
+      return res.status(400).json({ error: 'Invalid password' });
+    }
+
     return bcrypt
       .hash(password, await bcrypt.genSalt())
       .catch((err) => res.status(401).json({ err }))
@@ -36,17 +54,15 @@ class UserController {
       })
       .then(() => res.status(200).json({ registered: { email, username } }))
       .catch((err) => {
+        objectProto();
         if (err.code === 11000) {
-          const duplicateKeyField: string = Object.keys(err.keyPattern)[0];
+          const duplicateKeyField: string = err.keyPattern.keys()[0];
           return res
             .status(400)
             .json({ error: `${duplicateKeyField} already exists.` });
         }
         return res.status(400).json({
-          error: Object.values(err.errors).map(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (e: any) => e.properties.message,
-          ),
+          error: err.message,
         });
       })
       .then(() => res);
@@ -75,19 +91,22 @@ class UserController {
       return res.status(404).send({ error: 'User was not found' });
     }
 
-    const isValid: boolean = await bcrypt.compare(password, user.password);
-
-    if (!isValid) {
-      return res.status(404).json({ error: 'User was not found' });
-    }
-
-    const token: string = auth.generateToken(
-      user.username,
-      user.email,
-      req.body.rememberMe,
+    const isValidPassword: boolean = await bcrypt.compare(
+      password,
+      user.password,
     );
 
-    auth.setSessionCookie(res, token, req.body.rememberMe);
+    if (!isValidPassword) {
+      return res.status(404).json({ error: 'incorrect password' });
+    }
+
+    const token: string = generateToken(
+      user.username,
+      user.email,
+      !!req.body.rememberMe,
+    );
+
+    setSessionCookie(res, token, !!req.body.rememberMe);
 
     return res.status(200).json({ token });
   }
@@ -108,7 +127,8 @@ class UserController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    res.cookie('sessionId', '', { maxAge: 1 });
+    res.clearCookie('sessionId');
+
     return res.redirect('/');
   }
 }

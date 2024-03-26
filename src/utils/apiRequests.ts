@@ -23,7 +23,7 @@ export default class YouTubeHandler {
     playlistURL: string,
     nextPageToken?: string,
   ): Promise<string[]> {
-    const { apiKey } = process.env!;
+    const { apiKey } = process.env;
 
     if (!playlistURL) {
       throw new Error('Playlist URL is required');
@@ -67,7 +67,7 @@ export default class YouTubeHandler {
    * @returns {Promise<string[]>} A promise that resolves to a list of video durations.
    */
   static async fetchVideosDuration(ids: string[]): Promise<string[]> {
-    const { apiKey } = process.env!;
+    const { apiKey } = process.env;
     const maxResults = 50;
     const videos = [];
 
