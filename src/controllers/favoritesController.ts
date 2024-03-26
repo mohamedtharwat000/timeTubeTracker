@@ -86,7 +86,7 @@ class FavoritesController {
     res: Response,
   ): Promise<Response> {
     const { user } = res.locals;
-    const playlistId = req.params.id;
+    const playlistId = getPlaylistIdFromLink(req.params.id) || req.params.id;
 
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
