@@ -10,51 +10,70 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script defer src="/static/js/bootstrap.bundle.min.js"></script>
     <script defer src="/static/js/script.js"></script>
-    <title>
-        <%= title %> | TimeTubeTracker
-    </title>
+    <title><%= title %> | TimeTubeTracker</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark px-5-md">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark px-5">
         <div class="container-fluid">
-            <a href="#home" class="navbar-brand fs-3 fw-bold"> TimeTubeTracker </a>
-
-            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                aria-controls="home-navebar" data-bs-target="#home-navebar" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <a href="#home" class="navbar-brand fs-3 fw-bold">TimeTubeTracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="navbar-collapse collapse justify-content-end" id="home-navebar" style>
-                <ul class="navbar-nav">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item p-2">
-                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class=" btn btn-primary fs-5"
+                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
                             target="_blank" role="button"><i class="bi bi-github"></i></a>
                     </li>
                     <% if (user) { %>
-                        <li class="nav-item p-2">
-                            <a href="#" class=" btn btn-primary fs-5" role="button">Favorites</a>
-                        </li>
-                        <li class="nav-item p-2">
-                            <a href="/api/logout" class=" btn btn-primary fs-5" role="button">Logout</a>
-                        </li>
-                        <% } else { %>
-                            <li class="nav-item p-2">
-                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
-                                    data-bs-target="#login-modal">Log in</button>
-                            </li>
-                            <li class="nav-item p-2">
-                                <button type="button" class="btn btn-primary fs-5">Sign up</button>
-                            </li>
-                            <% } %>
+                    <li class="nav-item p-2">
+                        <a href="#" class="btn btn-primary fs-5" role="button">Favorites</a>
+                    </li>
+                    <li class="nav-item p-2">
+                        <a href="/api/logout" class="btn btn-primary fs-5" role="button">Logout</a>
+                    </li>
+                    <% } else { %>
+                    <li class="nav-item p-2">
+                        <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                            data-bs-target="#login-modal">Log in</button>
+                    </li>
+                    <li class="nav-item p-2">
+                        <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                            data-bs-target="#signup-modal">Sign up</button>
+                    </li>
+                    <% } %>
                 </ul>
             </div>
-
         </div>
     </nav>
 
-
+    <!-- Hero Section -->
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div>
+                    <h1>Welcome to <span class="text-primary">TimeTubeTracker</span></h1>
+                    <p class="lead my-4">
+                        TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never
+                        miss your favorite channels again. With TimeTubeTracker, you can easily keep track of the
+                        channels and videos you watch, set reminders for new uploads, and discover new content based on
+                        your interests.
+                    </p>
+                    <p class="lead">
+                        Whether you're a casual viewer or a YouTube enthusiast, TimeTubeTracker makes it easy to stay
+                        up-to-date with your favorite channels and discover new ones. Say goodbye to missed uploads and
+                        hello to a more organized and efficient YouTube experience.
+                    </p>
+                    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#signup-modal">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Login Modal -->
     <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-title" aria-hidden="true">
@@ -92,8 +111,64 @@
         </div>
     </div>
 
-    <section></section>
-    <footer></footer>
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signup-modal" tabindex="-1" aria-labelledby="signup-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="signup-modal-title">Sign Up</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="signupForm">
+                    <div class="modal-body">
+                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" id="signup-username" class="form-control"
+                                placeholder="Enter a username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" id="signup-email" class="form-control"
+                                placeholder="Enter your email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" id="signup-password" class="form-control"
+                                placeholder="Enter a password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="signup-confirmPassword" class="form-control"
+                                placeholder="Confirm your password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About TimeTubeTracker</h5>
+                    <p>TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never miss
+                        your favorite channels again.</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>
