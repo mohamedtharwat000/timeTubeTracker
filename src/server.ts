@@ -38,14 +38,8 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(
-  '/static/css',
-  express.static(path.join(__dirname, '../node_modules/bootstrap/dist/css')),
-  express.static(path.join(__dirname, '../node_modules/bootstrap-icons/font')),
-  express.static(path.join(__dirname, '../node_modules/bootstrap-icons/icons')),
-);
-app.use(
-  '/static/js',
-  express.static(path.join(__dirname, '../node_modules/bootstrap/dist/js')),
+  '/static/node_modules',
+  express.static(path.join(__dirname, '../node_modules/')),
 );
 
 app.use('/', indexRouter);

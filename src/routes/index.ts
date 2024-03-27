@@ -4,7 +4,7 @@ import UserController from '../controllers/usersController';
 const indexRouter: Router = express.Router();
 
 indexRouter.get('/', (_req: Request, res: Response) => {
-  res.render('home', { title: 'Home' });
+  res.render('home', { user: res.locals.user });
 });
 
 indexRouter.post('/signup', UserController.signUp);

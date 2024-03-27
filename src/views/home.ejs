@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <script defer src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
-    <script defer src="/static/js/bootstrap.bundle.min.js"></script>
-    <script defer src="/static/js/script.js"></script>
-    <title>
-        <%= title %> | TimeTubeTracker
-    </title>
+    <script defer type="module" src="/static/js/script.js"></script>
+    <title>TimeTubeTracker</title>
 </head>
 
 <body>
@@ -26,14 +23,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item p-2">
-                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
-                            target="_blank" role="button"><i class="bi bi-github"></i></a>
-                    </li>
                     <% if (user) { %>
-                        <li class="nav-item p-2">
-                            <a href="#" class="btn btn-primary fs-5" role="button">Favorites</a>
-                        </li>
                         <li class="nav-item p-2">
                             <a href="/logout" class="btn btn-primary fs-5" role="button">Logout</a>
                         </li>
@@ -46,36 +36,50 @@
                                 <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
                                     data-bs-target="#signup-modal">Sign up</button>
                             </li>
-                            <% } %>
+                    <% } %>
+                    <li class="nav-item p-2">
+                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
+                            target="_blank" role="button"><i class="bi bi-github"></i></a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-dark text-light p-5 text-center text-sm-start">
-        <div class="container">
-            <div class="d-flex flex-column align-items-center justify-content-center">
-                <div>
-                    <h1>Welcome to <span class="text-primary">TimeTubeTracker</span></h1>
-                    <p class="lead my-4">
-                        TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never
-                        miss your favorite channels again. With TimeTubeTracker, you can easily keep track of the
-                        channels and videos you watch, set reminders for new uploads, and discover new content based on
-                        your interests.
-                    </p>
-                    <p class="lead">
-                        Whether you're a casual viewer or a YouTube enthusiast, TimeTubeTracker makes it easy to stay
-                        up-to-date with your favorite channels and discover new ones. Say goodbye to missed uploads and
-                        hello to a more organized and efficient YouTube experience.
-                    </p>
-                    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#signup-modal">
-                        Get Started
-                    </button>
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signup-modal" tabindex="-1" aria-labelledby="signup-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="signup-modal-title">Sign Up</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form method="POST" id="signupForm">
+                    <div class="modal-body">
+                        <div id="signupErrorAlert" class="alert alert-danger d-none" role="alert">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" id="signup-username" class="form-control" placeholder="Enter a username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" id="signup-password" class="form-control"
+                                placeholder="Enter a password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Login Modal -->
     <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-title" aria-hidden="true">
@@ -113,62 +117,113 @@
         </div>
     </div>
 
-    <!-- Sign Up Modal -->
-    <div class="modal fade" id="signup-modal" tabindex="-1" aria-labelledby="signup-modal-title" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="signup-modal-title">Sign Up</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Hero Section -->
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div>
+                    <h1>Welcome to <span class="text-primary">TimeTubeTracker</h1>
+                    <p class="lead my-4">Know YouTube playlists watch time.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter YouTube playlist link"
+                            aria-label="Playlist Link" aria-describedby="button-addon2">
+                        <button class="btn btn-primary" type="button" id="button-addon2">Calculate</button>
+                    </div>
+                    <div class="range_container">
+                    <div class="sliders_control">
+                        <input id="fromSlider" type="range" value="0" min="0" max="100" />
+                        <span id="fromValue">0</span>
+                        <input id="toSlider" type="range" value="40" min="0" max="100" />
+                        <span id="toValue">40</span>
+                    </div>
                 </div>
-                <form method="POST" id="signupForm">
-                    <div class="modal-body">
-                        <div id="signupErrorAlert" class="alert alert-danger d-none" role="alert">
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-username" class="form-label">Username</label>
-                            <input type="text" id="signup-username" class="form-control" placeholder="Enter a username">
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-email" class="form-label">Email</label>
-                            <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-password" class="form-label">Password</label>
-                            <input type="password" id="signup-password" class="form-control"
-                                placeholder="Enter a password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" id="signup-confirmPassword" class="form-control"
-                                placeholder="Confirm your password">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Sign Up</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Time</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Speed 1x</h5>
+                            <p class="card-text">Total watch time: 2 hours 30 minutes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Speed 1.5x</h5>
+                            <p class="card-text">Total watch time: 1 hour 40 minutes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Speed 2x</h5>
+                            <p class="card-text">Total watch time: 1 hour 15 minutes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Favorites Section -->
+    <section id="favorites" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Favorites</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Playlist 1</h5>
+                            <p class="card-text">Total watch time: 2 hours</p>
+                            <a href="#" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Playlist 2</h5>
+                            <p class="card-text">Total watch time: 3 hours 15 minutes</p>
+                            <a href="#" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Playlist 3</h5>
+                            <p class="card-text">Total watch time: 1 hour 30 minutes</p>
+                            <a href="#" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-5">
+    <footer class="bg-dark text-light py-5 text-1">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <h5>About TimeTubeTracker</h5>
-                    <p>TimeTubeTracker is a powerful tool that helps you track your YouTube viewing habits and never
-                        miss
-                        your favorite channels again.</p>
+                <div class="text-center">
+                    <p>Made with <i class="bi bi-heart-fill text-danger m-1"></i> by <a href="https://github.com/LORDyyyyy"
+                            target="_blank">Mohammed Khalid</a>
+                            and
+                            <a href="https://github.com/mohamedtharwat000"
+                            target="_blank">Mohamed Tharwat</a></p>
+                    <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
                 </div>
             </div>
-            <hr>
-            <div class="text-center">
-                <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
-            </div>
-        </div>
     </footer>
 </body>
 
