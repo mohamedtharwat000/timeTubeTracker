@@ -15,7 +15,7 @@ class PlaylistController {
     const playLists = req.body.playlists as [];
 
     if (!playLists || type(playLists) !== 'array' || playLists.length === 0) {
-      return res.status(401).json({ error: 'no url provided' });
+      return res.status(400).json({ error: 'no url provided' });
     }
 
     const playlistsData = {
@@ -39,13 +39,14 @@ class PlaylistController {
       if (!playlistURL) {
         return res.status(400).json({ error: 'Missing Playlist URL' });
       }
+      if (!re.test(playlistURL)) {
+        return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
+      }
+
       const extractedURL = (playlistURL as string)
         .match(re)[0]
         .split('list=')
         .filter((e: string) => e)[0];
-      if (!re.test(playlistURL)) {
-        return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
-      }
 
       const { start, end } = playlist;
       const data = await PlaylistController.calculatePlaylist(
@@ -110,7 +111,7 @@ class PlaylistController {
           return { error: 'Invalid End index' };
         }
         if (start > end) {
-          return { error: 'Invalid End and Start index' };
+          return { error: 'Invalid Start and End index' };
         }
 
         const fullDurationInMs = {};

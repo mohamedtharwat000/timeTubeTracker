@@ -3,7 +3,7 @@ import ms from 'ms';
 import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import helmet from 'helmet';
+// import helmet from 'helmet';
 import { log } from 'hlputils';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
@@ -20,7 +20,7 @@ const app: Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(helmet());
+// app.use(helmet());
 app.use(cors());
 app.use(authMiddleware);
 
