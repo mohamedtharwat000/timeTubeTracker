@@ -143,52 +143,21 @@
     <section style="background-color: #0c66ee; min-height: 43.5vh;" id="resultsSection"
         class="py-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap">
 
-        <!-- <div class="card m-2" style="width: 18rem;">
+        <div class="card m-2" style="width: 18rem;" id="totalPlaylistsCard">
             <div class="card-body ">
-                <h5 class="card-title">Total playlist videos: 55</h5>
-                <h6 class="card-title">Total wanted videos: 20</h6>
-                <h6 class="card-title">Average Duration: 11:11:11</h6>
+                <h4 class="card-title"> Total Videos: <span id="totalPlaylistsCardVids"> 0 </span></h4>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item"> <strong> 1.00x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.25x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.50x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.75x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 2.00x: </strong> 11:11:11</li>
-            </ul>
-            <div class="card-body">
-                <form class="form-outline">
-                    <div class="row">
-                        <input type="number" id="typeNumberStart" class="form-control m-1" placeholder="Start"
-                            style="width: 45%" min="1" max="5" />
-                        <input type="number" id="typeNumberEnd" class="form-control m-1" placeholder="End"
-                            style="width: 45%" min="1" max="5" />
-                        <div id="" class="invalid-feedback">
-                            Error: Invalid Start Input
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
-                        <button type="submit" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-success m-1 p-1" style="width: 93%;">Add to
-                            Favorite</button>
-                    </div>
-                </form>
-            </div>
-        </div> -->
-
-        <div class="card m-2" style="width: 18rem;">
-            <div class="card-body ">
-                <h4 class="card-title">Total Videos: 0</h4>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"> <strong> 1.00x: </strong> 00:00:00 </li>
-                <li class="list-group-item"> <strong> 1.25x: </strong> 00:00:00 </li>
-                <li class="list-group-item"> <strong> 1.50x: </strong> 00:00:00 </li>
-                <li class="list-group-item"> <strong> 1.75x: </strong> 00:00:00 </li>
-                <li class="list-group-item"> <strong> 2.00x: </strong> 00:00:00 </li>
+                <li class="list-group-item"> <strong> 1.00x: </strong> <span id="totalPlaylistsCard1x"> 00:00:00 </span>
+                </li>
+                <li class="list-group-item"> <strong> 1.25x: </strong> <span id="totalPlaylistsCard125x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 1.50x: </strong> <span id="totalPlaylistsCard150x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 1.75x: </strong> <span id="totalPlaylistsCard175x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 2.00x: </strong> <span id="totalPlaylistsCard2x"> 00:00:00 </span>
+                </li>
             </ul>
 
         </div>

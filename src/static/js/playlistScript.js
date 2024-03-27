@@ -45,6 +45,22 @@ function addPlaylistDataCard(playlistDataOBject) {
   document.getElementById('resultsSection').appendChild(playlistDataCard);
 }
 
+function updatePlaylistDataCard(playlistSumOBject) {
+  // const totalPlaylistsCard = document.getElementById('totalPlaylistsCard');
+  const speeds = ['1x', '125x', '150x', '175x', '2x'];
+
+  document.querySelector(
+    '#totalPlaylistsCard #totalPlaylistsCardVids',
+  ).innerHTML = playlistSumOBject.totalVideos;
+
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  for (let i = 0; i < speeds.length; i += 1) {
+    document.querySelector(
+      `#totalPlaylistsCard #totalPlaylistsCard${speeds[i]}`,
+    ).innerHTML = Object.values(playlistSumOBject.durations)[i];
+  }
+}
+
 document
   .getElementById('playlistForm')
   .addEventListener('submit', async (event) => {
@@ -72,6 +88,7 @@ document
         return;
       }
       addPlaylistDataCard(data.playlists.at(-1));
+      updatePlaylistDataCard(data.sum);
       // addPlaylistDataCard(playlistArray.at(-1));
       console.log(data);
     });
