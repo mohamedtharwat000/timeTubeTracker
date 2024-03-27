@@ -145,7 +145,7 @@ class PlaylistController {
           },
         };
       })
-      .catch((err) => ({ error: `Invalid Playlist ID: ${err}` }));
+      .catch(() => ({ error: 'Invalid Playlist ID' }));
   }
 }
 

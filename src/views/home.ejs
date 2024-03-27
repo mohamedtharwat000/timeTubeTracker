@@ -9,6 +9,7 @@
     <script defer src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
     <script defer type="module" src="/static/js/script.js"></script>
+    <script defer type="module" src="/static/js/playlistScript.js"></script>
     <title>TimeTubeTracker</title>
 </head>
 
@@ -126,25 +127,23 @@
                     <p class="lead my-4">Know YouTube playlists watch time.</p>
                     <form class="input-group mb-3" method="POST" id="playlistForm">
                         <input type="text" class="form-control" placeholder="Enter YouTube playlist link"
-                            aria-label="Playlist Link" aria-describedby="button-addon2">
+                            aria-label="Playlist Link" aria-describedby="button-addon2" id="playlistInput">
                         <button type="submit" class="btn btn-primary" type="button"
                             id="button-addon2">Calculate</button>
+                        <div id="playlistInputValidation" class="invalid-feedback fw-bold">
+                            Error: Invalid Start Input
+                        </div>
                     </form>
-                </div>
-                <div class="row">
-                    <p id="playlistInputError" class="alert alert-danger py-2 px-5 m-1" role="alert">
-                        Error: Invalid Playlist Link/ID
-                    </p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Results Section -->
-    <section style="background-color: #0c66ee; min-height: 43.5vh;"
+    <section style="background-color: #0c66ee; min-height: 43.5vh;" id="resultsSection"
         class="py-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap">
 
-        <div class="card m-2" style="width: 18rem;">
+        <!-- <div class="card m-2" style="width: 18rem;">
             <div class="card-body ">
                 <h5 class="card-title">Total playlist videos: 55</h5>
                 <h6 class="card-title">Total wanted videos: 20</h6>
@@ -160,126 +159,25 @@
             <div class="card-body">
                 <form class="form-outline">
                     <div class="row">
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="Start"
+                        <input type="number" id="typeNumberStart" class="form-control m-1" placeholder="Start"
                             style="width: 45%" min="1" max="5" />
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="End"
+                        <input type="number" id="typeNumberEnd" class="form-control m-1" placeholder="End"
                             style="width: 45%" min="1" max="5" />
+                        <div id="" class="invalid-feedback">
+                            Error: Invalid Start Input
+                        </div>
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
                         <button type="submit" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
-
                     </div>
                     <div class="row">
-                        <p id="signupErrorAlert" class="alert alert-danger p-1 m-1" style="width: 93%;" role="alert">
-                            Error: Invalid Start Input
-                        </p>
+                        <button type="submit" class="btn btn-success m-1 p-1" style="width: 93%;">Add to
+                            Favorite</button>
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="card m-2" style="width: 18rem;">
-            <div class="card-body ">
-                <h5 class="card-title">Total playlist videos: 55</h5>
-                <h6 class="card-title">Total wanted videos: 20</h6>
-                <h6 class="card-title">Average Duration: 11:11:11</h6>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"> <strong> 1.00x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.25x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.50x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.75x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 2.00x: </strong> 11:11:11</li>
-            </ul>
-            <div class="card-body">
-                <form class="form-outline">
-                    <div class="row">
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="Start"
-                            style="width: 45%" min="1" max="5" />
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="End"
-                            style="width: 45%" min="1" max="5" />
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
-                        <button type="submit" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
-
-                    </div>
-                    <div class="row">
-                        <p id="signupErrorAlert" class="alert alert-danger p-1 m-1" style="width: 93%;" role="alert">
-                            Error: Invalid Start Input
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="card m-2" style="width: 18rem;">
-            <div class="card-body ">
-                <h5 class="card-title">Total playlist videos: 55</h5>
-                <h6 class="card-title">Total wanted videos: 20</h6>
-                <h6 class="card-title">Average Duration: 11:11:11</h6>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"> <strong> 1.00x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.25x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.50x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.75x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 2.00x: </strong> 11:11:11</li>
-            </ul>
-            <div class="card-body">
-                <form class="form-outline">
-                    <div class="row">
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="Start"
-                            style="width: 45%" min="1" max="5" />
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="End"
-                            style="width: 45%" min="1" max="5" />
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
-                        <button type="submit" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
-
-                    </div>
-                    <div class="row">
-                        <p id="signupErrorAlert" class="alert alert-danger p-1 m-1" style="width: 93%;" role="alert">
-                            Error: Invalid Start Input
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="card m-2" style="width: 18rem;">
-            <div class="card-body ">
-                <h5 class="card-title">Total playlist videos: 55</h5>
-                <h6 class="card-title">Total wanted videos: 20</h6>
-                <h6 class="card-title">Average Duration: 11:11:11</h6>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"> <strong> 1.00x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.25x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.50x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 1.75x: </strong> 11:11:11</li>
-                <li class="list-group-item"> <strong> 2.00x: </strong> 11:11:11</li>
-            </ul>
-            <div class="card-body">
-                <form class="form-outline">
-                    <div class="row">
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="Start"
-                            style="width: 45%" min="1" max="5" />
-                        <input type="number" id="typeNumber" class="form-control m-1" placeholder="End"
-                            style="width: 45%" min="1" max="5" />
-                    </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
-                        <button type="submit" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
-
-                    </div>
-                    <div class="row">
-                        <p id="signupErrorAlert" class="alert alert-danger p-1 m-1" style="width: 93%;" role="alert">
-                            Error: Invalid Start Input
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
+        </div> -->
 
         <div class="card m-2" style="width: 18rem;">
             <div class="card-body ">
