@@ -96,8 +96,8 @@ document
         title: 'Welcome!',
         text: 'You are now registered',
         icon: 'success',
-      }).then(() => {
-        // login(username, password, false);
+      }).then(async () => {
+        await login(username, password, false);
         window.location.href = '/';
       });
     } else {
