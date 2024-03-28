@@ -19,25 +19,38 @@ class UserController {
     const { username, email, password } = req.body;
 
     if (!email || !username || !password) {
-      return res
-        .status(400)
-        .send({ error: 'Email, username and password are required' });
+      return res.status(400).send({
+        error: {
+          username: !username ? 'Username is required.' : null,
+          email: !email ? 'Email is required.' : null,
+          password: !password ? 'Password is required.' : null,
+        },
+      });
     }
 
     const ifValidEmail: boolean = validator.isEmail(email);
     const ifValidUsername: boolean = validator.isAlphanumeric(username);
-    const ifValidPassword: boolean = validator.isStrongPassword(password);
+    const ifValidPassword: boolean = validator.isStrongPassword(password, {
+      minLength: 5,
+      minNumbers: 1,
+      minUppercase: 0,
+      minSymbols: 0,
+    });
 
     if (!ifValidEmail) {
-      return res.status(400).json({ error: 'Invalid email' });
+      return res.status(400).json({ error: { email: 'Invalid Email' } });
     }
 
     if (!ifValidUsername) {
-      return res.status(400).json({ error: 'Invalid username' });
+      return res.status(400).json({
+        error: { username: 'Invalid Username! Only Alphanumeric words' },
+      });
     }
 
     if (!ifValidPassword) {
-      return res.status(400).json({ error: 'Invalid password' });
+      return res
+        .status(400)
+        .json({ error: { password: 'Please enter a stronger Password' } });
     }
 
     return bcrypt
@@ -48,6 +61,7 @@ class UserController {
           email,
           username,
           password: hash,
+          favorites: [],
         });
         return user.save();
       })
@@ -55,9 +69,11 @@ class UserController {
       .catch((err) => {
         if (err.code === 11000) {
           const duplicateKeyField: string = Object.keys(err.keyValue)[0];
-          return res
-            .status(400)
-            .json({ error: `${duplicateKeyField} already exists.` });
+          return res.status(400).json({
+            error: {
+              [duplicateKeyField]: `${duplicateKeyField} already exists.`,
+            },
+          });
         }
         return res.status(400).json({
           error: err.message,

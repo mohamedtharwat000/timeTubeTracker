@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script defer type="module" src="/static/js/script.js"></script>
     <script defer type="module" src="/static/js/playlistScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>TimeTubeTracker</title>
 </head>
 
@@ -55,22 +56,27 @@
                     <h1 class="modal-title fs-5" id="signup-modal-title">Sign Up</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" id="signupForm">
+                <form method="POST" id="signupForm" novalidate>
                     <div class="modal-body">
-                        <div id="signupErrorAlert" class="alert alert-danger d-none" role="alert">
-                        </div>
                         <div class="mb-3">
                             <label for="signup-username" class="form-label">Username</label>
-                            <input type="text" id="signup-username" class="form-control" placeholder="Enter a username">
+                            <input type="text" id="signup-username" class="form-control"
+                                placeholder="Enter your username">
+                            <div class="invalid-feedback" id="signup-usernameValidation">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="signup-email" class="form-label">Email</label>
                             <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
+                            <div class="invalid-feedback" id="signup-emailValidation">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="signup-password" class="form-label">Password</label>
                             <input type="password" id="signup-password" class="form-control"
-                                placeholder="Enter a password">
+                                placeholder="Enter your password">
+                            <div class="invalid-feedback" id="signup-passwordValidation">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
