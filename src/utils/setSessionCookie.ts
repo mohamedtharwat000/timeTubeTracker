@@ -12,11 +12,11 @@ function setSessionCookie(
   token: string,
   rememberMe: boolean,
 ): void {
-  const maxAge = rememberMe ? ms('30d') : ms('1d');
+  const maxAge = { maxAge: rememberMe ? ms('30d') : null };
   res.cookie('sessionId', token, {
     httpOnly: true,
     secure: true,
-    maxAge,
+    ...maxAge,
   });
 }
 

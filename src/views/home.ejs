@@ -90,19 +90,21 @@
                     <h1 class="modal-title fs-5" id="login-modal-title">Login</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" id="loginForm">
+                <form method="POST" id="loginForm" novalidate>
                     <div class="modal-body">
-                        <div id="loginErrorAlert" class="alert alert-danger d-none" role="alert">
-                        </div>
                         <div class="mb-3">
                             <label for="login-usernameEmail" class="form-label">Email or Username</label>
                             <input type="text" id="login-usernameOrEmail" class="form-control"
-                                placeholder="Enter your email or username">
+                                placeholder="Enter your Email or Username">
+                            <div class="invalid-feedback" id="login-usernameOrEmailValidation">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="login-password" class="form-label">Password</label>
                             <input type="password" id="login-password" class="form-control"
                                 placeholder="Enter your password">
+                            <div class="invalid-feedback" id="login-passwordValidation">
+                            </div>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" id="login-rememberMe" class="form-check-input">

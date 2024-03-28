@@ -29,6 +29,10 @@ class Middleware {
       return next();
     }
 
+    if (res.locals.user) {
+      next();
+    }
+
     try {
       const payload = jwt.verify(sessionId || authorization, secretKey);
       const { email, username } = payload as {
