@@ -26,7 +26,7 @@ function addPlaylistDataCard(playlistDataOBject, id) {
                             style="width: 45%" min="1" max="${playlistDataOBject.totalPlaylistVideos}"
                             value="${playlistDataOBject.indexes.mainStart || playlistDataOBject.indexes.start}"/>
                         <input type="number" id="typeNumberEnd" class="form-control m-1" placeholder="End"
-                            style="width: 45%" min="1" max="${playlistDataOBject.totalPlaylistVideos}" 
+                            style="width: 45%" min="1" max="${playlistDataOBject.totalPlaylistVideos}"
                             value="${playlistDataOBject.indexes.end || playlistDataOBject.indexes.mainEnd}"/>
                         <div class="invalid-feedback">
                         </div>
@@ -35,9 +35,8 @@ function addPlaylistDataCard(playlistDataOBject, id) {
                         <button type="submit" class="btn btn-primary m-1 p-1" style="width: 45%;">Calculate</button>
                         <button name="removeMe" class="btn btn-danger m-1 p-1" style="width: 45%;">Remove</button>
                     </div>
-                    <div class="row">
-                        <button type="submit" class="btn btn-success m-1 p-1" style="width: 93%;">Add to
-                            Favorite</button>
+                     <div class="row">
+                        <button type="submit" class="btn btn-success m-1 p-1" style="width: 93%;" ${playlistDataOBject.isFavorite ? 'disabled' : ''}>Add to Favorite</button>
                     </div>
                     <!-- </form> -->
             </div>
@@ -74,6 +73,10 @@ const fetchAndUpdateData = async () => {
     }),
   }).then(async (res) => {
     const data = await res.json();
+    data.playlists = data.playlists.map((playlist) => ({
+      ...playlist,
+      isFavorite: false,
+    }));
     return data;
   });
 };
@@ -188,5 +191,48 @@ document
           parentNode.querySelector('.invalid-feedback');
         playlistInputValidation.innerHTML = error;
       }
+    } else if (event.target.tagName === 'BUTTON') {
+      const playlistIndex =
+        event.target.parentNode.parentNode.parentNode.id - 1;
+      const url = playlistArray[playlistIndex].playlistURL;
+
+      const response = await fetch('/api/favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playlistURL: url,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        playlistsData.playlists[playlistIndex].isFavorite = true;
+        // eslint-disable-next-line no-param-reassign
+        event.target.disabled = true;
+      } else {
+        // eslint-disable-next-line no-undef
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: `Error adding playlist to favorites: ${data.error}`,
+        });
+      }
     }
   });
+
+function renderFavoritePlaylistCards(favorites) {}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const response = await fetch('/api/favorite');
+  const favorites = await response.json();
+  if (!favorites.error) {
+    renderFavoritePlaylistCards(favorites.favorites);
+  }
+});
+
+document
+  .getElementById('favoritesSection')
+  .addEventListener('click', async (event) => {});

@@ -1,4 +1,4 @@
-async function login(password, usernameOrEmail, rememberMe, showMsg = false) {
+async function login(usernameOrEmail, password, rememberMe) {
   return fetch('/login', {
     method: 'POST',
     headers: {
@@ -11,23 +11,23 @@ async function login(password, usernameOrEmail, rememberMe, showMsg = false) {
       rememberMe,
     }),
   }).then(async (res) => {
-    const data = await res.json();
-    if (!res.ok) {
-      return data.error;
-    }
-    if (showMsg) {
-      // eslint-disable-next-line no-undef
-      Swal.fire({
-        title: 'Welcome!',
-        text: 'Account created successfully! You are now logged in',
-        icon: 'success',
-      }).then(() => {
-        window.location.href = '/';
-      });
-    } else {
-      window.location.href = '/';
-    }
-    return {};
+    return res.json();
+  });
+}
+
+async function signup(username, email, password) {
+  return fetch('/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username,
+      email,
+      password,
+    }),
+  }).then(async (res) => {
+    return res.json();
   });
 }
 
@@ -46,20 +46,31 @@ document
       .getElementById('login-usernameOrEmail')
       .classList.remove('is-invalid');
     document.getElementById('login-password').classList.remove('is-invalid');
-    const errors = await login(password, usernameOrEmail, rememberMe);
 
-    if (errors) {
-      if (errors.password) {
-        document.getElementById('login-password').classList.add('is-invalid');
-        document.getElementById('login-passwordValidation').innerHTML =
-          errors.password;
-      }
-      if (errors.usernameOrEmail) {
+    const res = await login(usernameOrEmail, password, rememberMe);
+
+    if (res.token) {
+      // eslint-disable-next-line no-undef
+      Swal.fire({
+        title: 'Welcome!',
+        text: 'You are now logged in',
+        icon: 'success',
+      }).then(() => {
+        window.location.href = '/';
+      });
+    } else {
+      if (res.error.usernameOrEmail) {
         document
           .getElementById('login-usernameOrEmail')
           .classList.add('is-invalid');
         document.getElementById('login-usernameOrEmailValidation').innerHTML =
-          errors.usernameOrEmail;
+          res.error.usernameOrEmail;
+      }
+
+      if (res.error.password) {
+        document.getElementById('login-password').classList.add('is-invalid');
+        document.getElementById('login-passwordValidation').innerHTML =
+          res.error.password;
       }
     }
   });
@@ -77,44 +88,33 @@ document
     document.getElementById('signup-email').classList.remove('is-invalid');
     document.getElementById('signup-password').classList.remove('is-invalid');
 
-    // const errors = await login(password, usernameOrEmail, false);
-    await fetch('/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
-    }).then(async (res) => {
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data);
-        if (data.error) {
-          if (data.error.password) {
-            document
-              .getElementById('signup-password')
-              .classList.add('is-invalid');
-            document.getElementById('signup-passwordValidation').innerHTML =
-              data.error.password;
-          }
-          if (data.error.username) {
-            document
-              .getElementById('signup-username')
-              .classList.add('is-invalid');
-            document.getElementById('signup-usernameValidation').innerHTML =
-              data.error.username;
-          }
-          if (data.error.email) {
-            document.getElementById('signup-email').classList.add('is-invalid');
-            document.getElementById('signup-emailValidation').innerHTML =
-              data.error.email;
-          }
-        }
+    const res = await signup(username, email, password);
+
+    if (res.registered) {
+      // eslint-disable-next-line no-undef
+      Swal.fire({
+        title: 'Welcome!',
+        text: 'You are now registered',
+        icon: 'success',
+      }).then(() => {
+        window.location.href = '/';
+      });
+    } else {
+      if (res.error.includes('username')) {
+        document.getElementById('signup-username').classList.add('is-invalid');
+        document.getElementById('signup-usernameValidation').innerHTML =
+          res.error;
       }
-      await login(password, username, false, true);
-      return null;
-    });
+
+      if (res.error.includes('email')) {
+        document.getElementById('signup-email').classList.add('is-invalid');
+        document.getElementById('signup-emailValidation').innerHTML = res.error;
+      }
+
+      if (res.error.includes('password')) {
+        document.getElementById('signup-password').classList.add('is-invalid');
+        document.getElementById('signup-passwordValidation').innerHTML =
+          res.error;
+      }
+    }
   });

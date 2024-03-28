@@ -26,7 +26,7 @@ class FavoritesController {
 
     const { username } = user;
 
-    if (user.favorites.includes(playlistURL)) {
+    if (user.favorites.includes(getPlaylistIdFromLink(playlistURL))) {
       return res
         .status(406)
         .json({ error: 'Playlist already exists in your favorite list' });

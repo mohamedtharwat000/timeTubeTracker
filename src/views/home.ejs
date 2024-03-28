@@ -119,7 +119,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" id="loginSubmit" class="btn btn-primary">Login</button>
                     </div>
                 </form>
             </div>
@@ -148,8 +148,8 @@
     </section>
 
     <!-- Results Section -->
-    <section style="background-color: #0c66ee; min-height: 43.5vh;" id="resultsSection"
-        class="py-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap">
+    <section id="resultsSection"
+        class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap">
 
         <div class="card m-2" style="width: 18rem;" id="totalPlaylistsCard">
             <div class="card-body ">
@@ -170,6 +170,16 @@
 
         </div>
     </section>
+
+    <% if (user) { %>
+  <!-- Separator -->
+  <section class="bg-dark py-5"></section>
+
+  <!-- Favorites Section -->
+  <section class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap" id="favoritesSection">
+    <!-- Favorite playlist cards will be rendered here -->
+  </section>
+<% } %>
 
     <!-- Footer -->
     <footer class="bg-dark text-light py-5 text-1">
