@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import User from '../models/users/user';
+import User from '../models/user';
+import getPlaylistIdFromLink from '../utils/getPlaylistId';
 
 /**
  *  class containing methods for managing user favorites.
@@ -19,66 +20,39 @@ class FavoritesController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // eslint-disable-next-line no-underscore-dangle
-    const userId: string = user._id;
+    if (!playlistURL) {
+      return res.status(400).json({ error: 'Playlist URL is required' });
+    }
 
-    if (!user.favorites.includes(playlistURL)) {
-      await User.findByIdAndUpdate(userId, {
+    const { username } = user;
+
+    if (user.favorites.includes(getPlaylistIdFromLink(playlistURL))) {
+      return res
+        .status(406)
+        .json({ error: 'Playlist already exists in your favorite list' });
+    }
+
+    const playlistId = getPlaylistIdFromLink(playlistURL);
+
+    if (!playlistId) {
+      return res.status(400).json({ error: 'Invalid playlist URL' });
+    }
+
+    await User.updateOne(
+      { username },
+      {
         $push: {
-          favorites: playlistURL,
+          favorites: playlistId,
         },
-      });
+      },
+    );
 
-      return res.status(200).json({
-        success: {
-          message: 'Playlist was added successfully',
-          playlist: playlistURL,
-        },
-      });
-    }
-    return res
-      .status(406)
-      .json({ error: 'Playlist already exists in your favorite list' });
-  }
-
-  /**
-   * Removes a playlist URL from the user's favorites.
-   * @param req - Express request object.
-   * @param res - Express response object.
-   * @returns Promise<void>
-   */
-  static async removeFromFavorite(
-    req: Request,
-    res: Response,
-  ): Promise<Response> {
-    const { user } = res.locals;
-    const { playlistURL } = req.body;
-
-    if (!user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // eslint-disable-next-line no-underscore-dangle
-    const userId: string = user._id;
-
-    if (user.favorites.includes(playlistURL)) {
-      await User.findByIdAndUpdate(userId, {
-        $pull: {
-          favorites: playlistURL,
-        },
-      });
-
-      return res.status(200).json({
-        success: {
-          message: 'Playlist deleted successfully',
-          playlist: playlistURL,
-          userId,
-        },
-      });
-    }
-    return res
-      .status(406)
-      .json({ error: 'Playlist does not exist in your favorite list' });
+    return res.status(200).json({
+      success: {
+        message: 'Playlist was added successfully',
+        playlistURL,
+      },
+    });
   }
 
   /**
@@ -94,10 +68,58 @@ class FavoritesController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // eslint-disable-next-line no-underscore-dangle
-    const { favorites } = await User.findById(user._id).select('favorites');
+    const { username } = user;
+
+    const favorites = await User.findOne({ username }).select('favorites');
 
     return res.status(200).json(favorites);
+  }
+
+  /**
+   * Removes a playlist URL from the user's favorites.
+   * @param req - Express request object.
+   * @param res - Express response object.
+   * @returns Promise<void>
+   */
+  static async removeFromFavorite(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { user } = res.locals;
+    const playlistId = getPlaylistIdFromLink(req.params.id) || req.params.id;
+
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!playlistId) {
+      return res.status(400).json({ error: 'Playlist ID is required' });
+    }
+
+    const { username } = user;
+
+    if (!user.favorites.includes(playlistId)) {
+      return res
+        .status(406)
+        .json({ error: 'Playlist does not exist in your favorite list' });
+    }
+
+    await User.updateOne(
+      { username },
+      {
+        $pull: {
+          favorites: playlistId,
+        },
+      },
+    );
+
+    return res.status(200).json({
+      success: {
+        message: 'Playlist deleted successfully',
+        playlist: playlistId,
+        username,
+      },
+    });
   }
 }
 

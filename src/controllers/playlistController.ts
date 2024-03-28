@@ -15,7 +15,7 @@ class PlaylistController {
     const playLists = req.body.playlists as [];
 
     if (!playLists || type(playLists) !== 'array' || playLists.length === 0) {
-      return res.status(401).json({ error: 'no url provided' });
+      return res.status(400).json({ error: 'no url provided' });
     }
 
     const playlistsData = {
@@ -39,13 +39,14 @@ class PlaylistController {
       if (!playlistURL) {
         return res.status(400).json({ error: 'Missing Playlist URL' });
       }
+      if (!re.test(playlistURL)) {
+        return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
+      }
+
       const extractedURL = (playlistURL as string)
         .match(re)[0]
         .split('list=')
         .filter((e: string) => e)[0];
-      if (!re.test(playlistURL)) {
-        return res.status(400).json({ error: 'Invalid Playlist URL/ID' });
-      }
 
       const { start, end } = playlist;
       const data = await PlaylistController.calculatePlaylist(
@@ -99,6 +100,10 @@ class PlaylistController {
           ? JSON.parse(await redisClient.get(playlistId))
           : await YouTubeHandler.fetchVideosDuration(data);
 
+        const playlistTitle = cachedPlaylistExists
+          ? await redisClient.get(`${playlistId}_title`)
+          : await YouTubeHandler.fetchPlaylistTitle(playlistId);
+
         const dataLength = dataDuration.length;
         const start = reqStart ?? 1;
         const end = reqEnd ?? dataLength;
@@ -110,7 +115,7 @@ class PlaylistController {
           return { error: 'Invalid End index' };
         }
         if (start > end) {
-          return { error: 'Invalid End and Start index' };
+          return { error: 'Invalid Start and End index' };
         }
 
         const fullDurationInMs = {};
@@ -126,12 +131,16 @@ class PlaylistController {
         await redisClient.set(
           `${playlistId}`,
           JSON.stringify(dataDuration),
-          3600 * 24, // 24 hours
+          { EX: 3600 * 24 }, // 24 hours
         );
+        await redisClient.set(`${playlistId}_title`, playlistTitle, {
+          EX: 3600 * 24,
+        });
 
         return {
           totalPlaylistVideos: dataLength,
           totalVideos: end - start + 1,
+          playlistTitle,
           averageDuration: msToHMS(fullDurationInMs['1x'] / (end - start + 1)),
           indexes: { start, end },
           durationInMs: fullDurationInMs['1x'],
@@ -145,7 +154,7 @@ class PlaylistController {
           },
         };
       })
-      .catch((err) => ({ error: `Invalid Playlist ID: ${err}` }));
+      .catch(() => ({ error: 'Invalid Playlist URL/ID' }));
   }
 }
 

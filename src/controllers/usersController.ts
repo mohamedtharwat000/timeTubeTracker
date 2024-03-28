@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import validator from 'validator';
 import bcrypt from 'bcrypt';
-import auth from '../utils/auth';
-import User from '../models/users/user';
-import UserInterface from '../models/users/userInterface';
+import generateToken from '../utils/generateToken';
+import setSessionCookie from '../utils/setSessionCookie';
+import User, { UserInterface } from '../models/user';
 
 /**
  * Class representing user controller methods.
@@ -18,9 +19,38 @@ class UserController {
     const { username, email, password } = req.body;
 
     if (!email || !username || !password) {
+      return res.status(400).send({
+        error: {
+          username: !username ? 'Username is required.' : null,
+          email: !email ? 'Email is required.' : null,
+          password: !password ? 'Password is required.' : null,
+        },
+      });
+    }
+
+    const ifValidEmail: boolean = validator.isEmail(email);
+    const ifValidUsername: boolean = validator.isAlphanumeric(username);
+    const ifValidPassword: boolean = validator.isStrongPassword(password, {
+      minLength: 5,
+      minNumbers: 1,
+      minUppercase: 0,
+      minSymbols: 0,
+    });
+
+    if (!ifValidEmail) {
+      return res.status(400).json({ error: { email: 'Invalid Email' } });
+    }
+
+    if (!ifValidUsername) {
+      return res.status(400).json({
+        error: { username: 'Invalid Username! Only Alphanumeric words' },
+      });
+    }
+
+    if (!ifValidPassword) {
       return res
         .status(400)
-        .send({ error: 'Email, username and password are required' });
+        .json({ error: { password: 'Please enter a stronger Password' } });
     }
 
     return bcrypt
@@ -31,22 +61,22 @@ class UserController {
           email,
           username,
           password: hash,
+          favorites: [],
         });
         return user.save();
       })
       .then(() => res.status(200).json({ registered: { email, username } }))
       .catch((err) => {
         if (err.code === 11000) {
-          const duplicateKeyField: string = Object.keys(err.keyPattern)[0];
-          return res
-            .status(400)
-            .json({ error: `${duplicateKeyField} already exists.` });
+          const duplicateKeyField: string = Object.keys(err.keyValue)[0];
+          return res.status(400).json({
+            error: {
+              [duplicateKeyField]: `${duplicateKeyField} already exists.`,
+            },
+          });
         }
         return res.status(400).json({
-          error: Object.values(err.errors).map(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (e: any) => e.properties.message,
-          ),
+          error: err.message,
         });
       })
       .then(() => res);
@@ -62,9 +92,13 @@ class UserController {
     const { username, email, password } = req.body;
 
     if ((!email && !username) || !password) {
-      return res
-        .status(400)
-        .send({ error: 'Email or username and password are required' });
+      return res.status(400).send({
+        error: {
+          usernameOrEmail:
+            !email || !username ? 'Email or Username are required.' : null,
+          password: !password ? 'Password is required.' : null,
+        },
+      });
     }
 
     const user: UserInterface = await User.findOne({
@@ -72,28 +106,35 @@ class UserController {
     }).exec();
 
     if (!user) {
-      return res.status(404).send({ error: 'User not found' });
+      return res
+        .status(404)
+        .send({ error: { usernameOrEmail: 'Email/Username was not found' } });
     }
 
-    const isValid: boolean = await bcrypt.compare(password, user.password);
-
-    if (!isValid) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const token: string = auth.generateToken(
-      user.username,
-      user.email,
-      req.body.rememberMe,
+    const isValidPassword: boolean = await bcrypt.compare(
+      password,
+      user.password,
     );
 
-    auth.setSessionCookie(res, token, req.body.rememberMe);
+    if (!isValidPassword) {
+      return res
+        .status(404)
+        .json({ error: { password: 'Incorrect password' } });
+    }
+
+    const token: string = generateToken(
+      user.username,
+      user.email,
+      !!req.body.rememberMe,
+    );
+
+    setSessionCookie(res, token, !!req.body.rememberMe);
 
     return res.status(200).json({ token });
   }
 
   /**
-   * DELETE /api/logout
+   * GET /api/logout
    * Logout a user from the session
    * And save the token to the blacklist cache list
    *
@@ -102,14 +143,9 @@ class UserController {
    * @param {Response} res - express Response
    */
   static logout(req: Request, res: Response) {
-    const token: string = req.cookies.sessionId;
+    res.clearCookie('sessionId');
 
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    res.cookie('sessionId', '', { maxAge: 1 });
-    return res.status(200).json({ success: 'logged out' });
+    return res.redirect('/');
   }
 }
 

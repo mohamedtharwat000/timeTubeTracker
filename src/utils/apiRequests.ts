@@ -23,7 +23,7 @@ export default class YouTubeHandler {
     playlistURL: string,
     nextPageToken?: string,
   ): Promise<string[]> {
-    const { apiKey } = process.env!;
+    const { apiKey } = process.env;
 
     if (!playlistURL) {
       throw new Error('Playlist URL is required');
@@ -67,7 +67,7 @@ export default class YouTubeHandler {
    * @returns {Promise<string[]>} A promise that resolves to a list of video durations.
    */
   static async fetchVideosDuration(ids: string[]): Promise<string[]> {
-    const { apiKey } = process.env!;
+    const { apiKey } = process.env;
     const maxResults = 50;
     const videos = [];
 
@@ -87,5 +87,22 @@ export default class YouTubeHandler {
       );
     }
     return videos.map((e) => parseIso8601Duration(e.contentDetails.duration));
+  }
+
+  /**
+   * Fetches the title of a Youtube playlist list.
+   * @param {string[]} ids - The list of video IDs.
+   * @returns {Promise<string[]>} A promise that resolves to a the playlist title.
+   */
+  static async fetchPlaylistTitle(playlistURL: string): Promise<string> {
+    const { apiKey } = process.env;
+
+    const response = await youtube.playlists.list({
+      part: ['snippet'],
+      key: apiKey,
+      id: [playlistURL],
+    });
+
+    return response.data.items[0].snippet.title;
   }
 }
