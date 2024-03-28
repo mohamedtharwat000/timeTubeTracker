@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <script defer src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer type="module" src="/static/js/script.js"></script>
+    <script defer type="module" src="/static/js/playlistScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>TimeTubeTracker</title>
+</head>
+
+<body class="bg-dark">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-md ">
+            <a href="#home" class="navbar-brand fs-3 fw-bold">TimeTubeTracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex flex-row flex-wrap justify-content-center">
+                    <% if (user) { %>
+                        <li class="nav-item p-2">
+                            <a href="/logout" class="btn btn-primary fs-5" role="button">Logout</a>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#signup-modal">Sign up</button>
+                            </li>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#login-modal">Log in</button>
+                            </li>
+                            <% } %>
+                                <li class="nav-item p-2">
+                                    <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
+                                        target="_blank" role="button"><i class="bi bi-github"></i></a>
+                                </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signup-modal" tabindex="-1" aria-labelledby="signup-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="signup-modal-title">Sign Up</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="signupForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" id="signup-username" class="form-control"
+                                placeholder="Enter your username">
+                            <div class="invalid-feedback" id="signup-usernameValidation">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
+                            <div class="invalid-feedback" id="signup-emailValidation">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" id="signup-password" class="form-control"
+                                placeholder="Enter your password">
+                            <div class="invalid-feedback" id="signup-passwordValidation">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="login-modal-title">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="loginForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="login-usernameEmail" class="form-label">Email or Username</label>
+                            <input type="text" id="login-usernameOrEmail" class="form-control"
+                                placeholder="Enter your Email or Username">
+                            <div class="invalid-feedback" id="login-usernameOrEmailValidation">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" id="login-password" class="form-control"
+                                placeholder="Enter your password">
+                            <div class="invalid-feedback" id="login-passwordValidation">
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="login-rememberMe" class="form-check-input">
+                            <label for="login-rememberMe" class="form-check-label">Remember Me</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="loginSubmit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div>
+                    <h1>Welcome to <span class="text-primary">TimeTubeTracker</h1>
+                    <p class="lead my-4">Know YouTube playlists watch time.</p>
+                    <form class="input-group mb-3" method="POST" id="playlistForm">
+                        <input type="text" class="form-control" placeholder="Enter YouTube playlist link"
+                            aria-label="Playlist Link" aria-describedby="button-addon2" id="playlistInput">
+                        <button type="submit" class="btn btn-primary" type="button"
+                            id="button-addon2">Calculate</button>
+                        <div id="playlistInputValidation" class="invalid-feedback fw-bold">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection"
+        class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap">
+
+        <div class="card m-2" style="width: 18rem;" id="totalPlaylistsCard">
+            <div class="card-body ">
+                <h4 class="card-title"> Total Videos: <span id="totalPlaylistsCardVids"> 0 </span></h4>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"> <strong> 1.00x: </strong> <span id="totalPlaylistsCard1x"> 00:00:00 </span>
+                </li>
+                <li class="list-group-item"> <strong> 1.25x: </strong> <span id="totalPlaylistsCard125x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 1.50x: </strong> <span id="totalPlaylistsCard150x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 1.75x: </strong> <span id="totalPlaylistsCard175x"> 00:00:00
+                    </span> </li>
+                <li class="list-group-item"> <strong> 2.00x: </strong> <span id="totalPlaylistsCard2x"> 00:00:00 </span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <% if (user) { %>
+        <!-- Separator -->
+        <section class="bg-dark py-2">
+            <h2 style="color: white;" class="d-flex justify-content-center">Favorites</h2>
+        </section>
+
+        <!-- Favorites Section -->
+        <section
+            class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap"
+            id="favoritesSection">
+            <div class="card m-2" style="width: 18rem;" id="totalPlaylistsCardFavorites">
+                <div class="card-body ">
+                    <h4 class="card-title"> Total Videos: <span id="totalPlaylistsCardVidsFavorites"> 0 </span></h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"> <strong> 1.00x: </strong> <span id="totalPlaylistsCard1xFavorites">
+                            00:00:00
+                        </span>
+                    </li>
+                    <li class="list-group-item"> <strong> 1.25x: </strong> <span id="totalPlaylistsCard125xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 1.50x: </strong> <span id="totalPlaylistsCard150xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 1.75x: </strong> <span id="totalPlaylistsCard175xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 2.00x: </strong> <span id="totalPlaylistsCard2xFavorites">
+                            00:00:00
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <% } %>
+
+            <!-- Footer -->
+            <footer class="bg-dark text-light py-5 text-1 mt-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="text-center">
+                            <p>Made with <i class="bi bi-heart-fill text-danger m-1"></i> by <a
+                                    href="https://github.com/LORDyyyyy" target="_blank" class="link-underline link-underline-opacity-0 
+                            link-offset-1-hover link-underline-opacity-75-hover">
+                                    Mohammed Khalid</a>
+                                and
+                                <a href="https://github.com/mohamedtharwat000" target="_blank" class="link-underline link-underline-opacity-0 
+                            link-offset-1-hover link-underline-opacity-75-hover">
+                                    Mohamed Tharwat</a>
+                            </p>
+                            <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
+                        </div>
+                    </div>
+            </footer>
+</body>
+
+</html>
