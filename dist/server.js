@@ -24,7 +24,7 @@ app.use((0, cookie_parser_1.default)());
 app.use(authMiddleware);
 app.use((0, express_rate_limit_1.default)({
     windowMs: (0, ms_1.default)('1m'),
-    limit: 10,
+    limit: 100,
     message: { error: 'Too many requests. Please try again later' },
 }));
 app.use('/static', express_1.default.static(path_1.default.join(__dirname, '/static')));

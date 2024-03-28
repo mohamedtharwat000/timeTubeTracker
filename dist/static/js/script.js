@@ -97,24 +97,26 @@ document
         text: 'You are now registered',
         icon: 'success',
       }).then(() => {
+        // login(username, password, false);
         window.location.href = '/';
       });
     } else {
-      if (res.error.includes('username')) {
+      if (res.error.username) {
         document.getElementById('signup-username').classList.add('is-invalid');
         document.getElementById('signup-usernameValidation').innerHTML =
-          res.error;
+          res.error.username;
       }
 
-      if (res.error.includes('email')) {
+      if (res.error.email) {
         document.getElementById('signup-email').classList.add('is-invalid');
-        document.getElementById('signup-emailValidation').innerHTML = res.error;
+        document.getElementById('signup-emailValidation').innerHTML =
+          res.error.email;
       }
 
-      if (res.error.includes('password')) {
+      if (res.error.password) {
         document.getElementById('signup-password').classList.add('is-invalid');
         document.getElementById('signup-passwordValidation').innerHTML =
-          res.error;
+          res.error.password;
       }
     }
   });
