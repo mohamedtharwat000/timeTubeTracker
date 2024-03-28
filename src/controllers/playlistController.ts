@@ -100,6 +100,10 @@ class PlaylistController {
           ? JSON.parse(await redisClient.get(playlistId))
           : await YouTubeHandler.fetchVideosDuration(data);
 
+        const playlistTitle = cachedPlaylistExists
+          ? await redisClient.get(`${playlistId}_title`)
+          : await YouTubeHandler.fetchPlaylistTitle(playlistId);
+
         const dataLength = dataDuration.length;
         const start = reqStart ?? 1;
         const end = reqEnd ?? dataLength;
@@ -129,10 +133,14 @@ class PlaylistController {
           JSON.stringify(dataDuration),
           { EX: 3600 * 24 }, // 24 hours
         );
+        await redisClient.set(`${playlistId}_title`, playlistTitle, {
+          EX: 3600 * 24,
+        });
 
         return {
           totalPlaylistVideos: dataLength,
           totalVideos: end - start + 1,
+          playlistTitle,
           averageDuration: msToHMS(fullDurationInMs['1x'] / (end - start + 1)),
           indexes: { start, end },
           durationInMs: fullDurationInMs['1x'],
@@ -146,7 +154,7 @@ class PlaylistController {
           },
         };
       })
-      .catch(() => ({ error: 'Invalid Playlist ID' }));
+      .catch(() => ({ error: 'Invalid Playlist URL/ID' }));
   }
 }
 

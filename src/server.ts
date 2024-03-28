@@ -24,7 +24,7 @@ app.use(authMiddleware);
 app.use(
   rateLimit({
     windowMs: ms('1m'),
-    limit: 60,
+    limit: 600,
     message: { error: 'Too many requests. Please try again later' },
   }),
 );

@@ -6,43 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-icons/font/bootstrap-icons.css">
-    <script defer src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <script defer src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script defer type="module" src="/static/js/script.js"></script>
     <script defer type="module" src="/static/js/playlistScript.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>TimeTubeTracker</title>
 </head>
 
-<body>
+<body class="bg-dark">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark px-5">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-md ">
             <a href="#home" class="navbar-brand fs-3 fw-bold">TimeTubeTracker</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto d-flex flex-row flex-wrap justify-content-center">
                     <% if (user) { %>
                         <li class="nav-item p-2">
                             <a href="/logout" class="btn btn-primary fs-5" role="button">Logout</a>
                         </li>
-                    <% } else { %>
-                        <li class="nav-item p-2">
-                            <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
-                                data-bs-target="#signup-modal">Sign up</button>
-                        </li>
-                        <li class="nav-item p-2">
-                            <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
-                                data-bs-target="#login-modal">Log in</button>
-                        </li>
-                    <% } %>
-                    <li class="nav-item p-2">
-                        <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
-                            target="_blank" role="button"><i class="bi bi-github"></i></a>
-                    </li>
+                        <% } else { %>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#signup-modal">Sign up</button>
+                            </li>
+                            <li class="nav-item p-2">
+                                <button type="button" class="btn btn-primary fs-5" data-bs-toggle="modal"
+                                    data-bs-target="#login-modal">Log in</button>
+                            </li>
+                            <% } %>
+                                <li class="nav-item p-2">
+                                    <a href="https://github.com/LORDyyyyy/timeTubeTracker" class="btn btn-primary fs-5"
+                                        target="_blank" role="button"><i class="bi bi-github"></i></a>
+                                </li>
                 </ul>
             </div>
         </div>
@@ -139,7 +140,6 @@
                         <button type="submit" class="btn btn-primary" type="button"
                             id="button-addon2">Calculate</button>
                         <div id="playlistInputValidation" class="invalid-feedback fw-bold">
-                            Error: Invalid Start Input
                         </div>
                     </form>
                 </div>
@@ -167,34 +167,64 @@
                 <li class="list-group-item"> <strong> 2.00x: </strong> <span id="totalPlaylistsCard2x"> 00:00:00 </span>
                 </li>
             </ul>
-
         </div>
     </section>
 
     <% if (user) { %>
-  <!-- Separator -->
-  <section class="bg-dark py-5"></section>
+        <!-- Separator -->
+        <section class="bg-dark py-2">
+            <h2 style="color: white;" class="d-flex justify-content-center">Favorites</h2>
+        </section>
 
-  <!-- Favorites Section -->
-  <section class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap" id="favoritesSection">
-    <!-- Favorite playlist cards will be rendered here -->
-  </section>
-<% } %>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-5 text-1">
-        <div class="container">
-            <div class="row">
-                <div class="text-center">
-                    <p>Made with <i class="bi bi-heart-fill text-danger m-1"></i> by <a
-                            href="https://github.com/LORDyyyyy" target="_blank">Mohammed Khalid</a>
-                        and
-                        <a href="https://github.com/mohamedtharwat000" target="_blank">Mohamed Tharwat</a>
-                    </p>
-                    <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
+        <!-- Favorites Section -->
+        <section
+            class="bg-primary p-4 d-flex flex-md-row flex-column align-items-md-start align-items-center justify-content-md-center flex-wrap"
+            id="favoritesSection">
+            <div class="card m-2" style="width: 18rem;" id="totalPlaylistsCardFavorites">
+                <div class="card-body ">
+                    <h4 class="card-title"> Total Videos: <span id="totalPlaylistsCardVidsFavorites"> 0 </span></h4>
                 </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"> <strong> 1.00x: </strong> <span id="totalPlaylistsCard1xFavorites">
+                            00:00:00
+                        </span>
+                    </li>
+                    <li class="list-group-item"> <strong> 1.25x: </strong> <span id="totalPlaylistsCard125xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 1.50x: </strong> <span id="totalPlaylistsCard150xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 1.75x: </strong> <span id="totalPlaylistsCard175xFavorites">
+                            00:00:00
+                        </span> </li>
+                    <li class="list-group-item"> <strong> 2.00x: </strong> <span id="totalPlaylistsCard2xFavorites">
+                            00:00:00
+                        </span>
+                    </li>
+                </ul>
             </div>
-    </footer>
+        </section>
+        <% } %>
+
+            <!-- Footer -->
+            <footer class="bg-dark text-light py-5 text-1 mt-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="text-center">
+                            <p>Made with <i class="bi bi-heart-fill text-danger m-1"></i> by <a
+                                    href="https://github.com/LORDyyyyy" target="_blank" class="link-underline link-underline-opacity-0 
+                            link-offset-1-hover link-underline-opacity-75-hover">
+                                    Mohammed Khalid</a>
+                                and
+                                <a href="https://github.com/mohamedtharwat000" target="_blank" class="link-underline link-underline-opacity-0 
+                            link-offset-1-hover link-underline-opacity-75-hover">
+                                    Mohamed Tharwat</a>
+                            </p>
+                            <p>&copy; <%= new Date().getFullYear() %> TimeTubeTracker. All rights reserved.</p>
+                        </div>
+                    </div>
+            </footer>
 </body>
 
 </html>
