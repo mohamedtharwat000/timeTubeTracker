@@ -4,6 +4,8 @@
 
 TimeTubeTracker is a web application designed to analyze YouTube playlists and provide various metrics related to video durations. Users can input a YouTube playlist link or ID to calculate the total number of videos, average video duration, and total playlist duration at different playback speeds. Additionally, users can log in to save favorite playlists for future reference and analyze multiple playlists simultaneously.
 
+![screenshot](https://github.com/mohamedtharwat000/timeTubeTracker/blob/main/src/static/images/timetubetracker.png)
+
 ## Project Idea
 
 The idea behind TimeTubeTracker stemmed from the need for a tool that could efficiently analyze YouTube playlists and provide detailed metrics. With the exponential growth of online content, especially on platforms like YouTube, users often find it challenging to manage and understand the content within their playlists. TimeTubeTracker aims to simplify this process by offering essential insights into playlist durations and some video statistics.
